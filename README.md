@@ -33,14 +33,23 @@
 פירוט הטבלאות:
 
 PATIENTS
+
 DOCTORS
+
 DEPARTMENTS
+
 ROOMS
+
 ADMISSIONS
+
 VITALS_LOGS
+
 MEDICATIONS
+
 PRESCRIPTIONS
+
 TESTS
+
 TEST_RESULTS
 
 💾 אכלוס נתונים (Data Population)
