@@ -27,6 +27,9 @@
 
 ---
 
+<img width="3744" height="1365" alt="DSD" src="https://github.com/user-attachments/assets/05a8b37a-7218-4172-85db-35bbab1c59f3" />
+
+
 <a name="data"></a>
 ## 💾 אכלוס נתונים ב-3 שיטות
 1. **ידני (CSV):** מחלקות וחדרים.
