@@ -1,0 +1,90 @@
+-- 1. טבלת מטופלים
+CREATE TABLE PATIENTS (
+  Patient_ID INT PRIMARY KEY,
+  First_Name VARCHAR(50) NOT NULL,
+  Last_Name VARCHAR(50) NOT NULL,
+  Birth_Date DATE NOT NULL,
+  Phone VARCHAR(15) NOT NULL
+);
+
+-- 2. טבלת רופאים
+CREATE TABLE DOCTORS (
+  Doctor_ID INT PRIMARY KEY,
+  Doctor_Name VARCHAR(100) NOT NULL,
+  Specialization VARCHAR(50) NOT NULL,
+  License_Number INT UNIQUE NOT NULL
+);
+
+-- 3. טבלת מחלקות
+CREATE TABLE DEPARTMENTS (
+  Dept_ID INT PRIMARY KEY,
+  Dept_Name VARCHAR(50) NOT NULL,
+  Floor INT NOT NULL
+);
+
+-- 4. טבלת חדרים 
+CREATE TABLE ROOMS (
+  Room_ID INT PRIMARY KEY,
+  Room_Number INT NOT NULL,
+  Dept_ID INT NOT NULL,
+  FOREIGN KEY (Dept_ID) REFERENCES DEPARTMENTS(Dept_ID)
+);
+
+-- 5. טבלת אשפוזים (מעודכן עם חדר)
+CREATE TABLE ADMISSIONS (
+  Admission_ID INT PRIMARY KEY,
+  Admission_Date DATE NOT NULL,
+  Patient_ID INT NOT NULL,
+  Room_ID INT NOT NULL,
+  Dept_ID INT NOT NULL,
+  FOREIGN KEY (Patient_ID) REFERENCES PATIENTS(Patient_ID),
+  FOREIGN KEY (Room_ID) REFERENCES ROOMS(Room_ID),
+  FOREIGN KEY (Dept_ID) REFERENCES DEPARTMENTS(Dept_ID)
+);
+
+-- 6. טבלת מדדים 
+CREATE TABLE VITALS_LOGS (
+  Log_ID INT PRIMARY KEY,
+  Check_Time TIMESTAMP NOT NULL,
+  Heart_Rate INT NOT NULL,
+  Temperature NUMERIC(3,1) NOT NULL,
+  Admission_ID INT NOT NULL,
+  FOREIGN KEY (Admission_ID) REFERENCES ADMISSIONS(Admission_ID)
+);
+
+-- 7. טבלת תרופות
+CREATE TABLE MEDICATIONS (
+  Medication_ID INT PRIMARY KEY,
+  Med_Name VARCHAR(100) NOT NULL,
+  Manufacturer VARCHAR(100),
+  Description VARCHAR(255)
+);
+
+-- 8. טבלת מרשמים (מעודכן לקשר עם תרופות)
+CREATE TABLE PRESCRIPTIONS (
+  Prescription_ID INT PRIMARY KEY,
+  Dosage VARCHAR(100) NOT NULL,
+  Admission_ID INT NOT NULL,
+  Doctor_ID INT NOT NULL,
+  Medication_ID INT NOT NULL,
+  FOREIGN KEY (Admission_ID) REFERENCES ADMISSIONS(Admission_ID),
+  FOREIGN KEY (Doctor_ID) REFERENCES DOCTORS(Doctor_ID),
+  FOREIGN KEY (Medication_ID) REFERENCES MEDICATIONS(Medication_ID)
+);
+
+-- 9. טבלת סוגי בדיקות 
+CREATE TABLE TESTS (
+  Test_ID_ INT PRIMARY KEY,
+  Test_Name VARCHAR(100) NOT NULL
+);
+
+-- 10. טבלת תוצאות בדיקות
+CREATE TABLE TEST_RESULTS (
+  Result_ID INT PRIMARY KEY,
+  Result_Value VARCHAR(100) NOT NULL,
+  Test_Date DATE NOT NULL,
+  Admission_ID INT NOT NULL,
+  Test_ID_ INT NOT NULL,
+  FOREIGN KEY (Admission_ID) REFERENCES ADMISSIONS(Admission_ID),
+  FOREIGN KEY (Test_ID_) REFERENCES TESTS(Test_ID_)
+);
