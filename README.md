@@ -1,4 +1,3 @@
-<img width="1439" height="764" alt="Time before" src="https://github.com/user-attachments/assets/d53b69f8-33db-4c4d-ac6d-d6b6a3c6cb26" />
 # 🏥 SmartCare OS | Hospital Management System
 
 **פרויקט בבסיסי נתונים**
