@@ -22,7 +22,6 @@
 - [🛡️ אילוצים ](#Constraints)
 - [🔄 טרנזקציות (Rollback & Commit)](#Transactions)
 - [⚡ שיפור ביצועים ואינדקסים](#index)
-
 * [📘 מילון הנתונים](#Dictionary)
 
 **שלב1**
@@ -244,8 +243,6 @@ Commit: ביצוע עדכון קומה למחלקה ואישורו הסופי ב
 <a name="Dictionary"></a>
 
 ## מילון מונחים📘
-
-# 📘 Data Dictionary Update – Phase B (Constraints & Indexes)
 
 במסגרת שיפור ביצועי המערכת ושמירה על שלמות הנתונים (**Data Integrity**), נוספו למערכת **SmartCare OS** שכבות הגנה ואופטימיזציה.
 
