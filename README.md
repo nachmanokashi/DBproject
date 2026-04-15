@@ -79,7 +79,9 @@ _אפיון דאשבורד המערכת שבוצע ב-Google AI Studio._
 ## 🔐 גיבוי ושחזור
 
 הגיבוי הסופי כולל את כל 10 הטבלאות והנתונים.
-![Backup Status](שלב%201/תמונות/צילום%20מסך%202026-03-25%20182640.png)
+<img width="1328" height="317" alt="גיבוי" src="https://github.com/user-attachments/assets/acce4e6f-3c08-408f-8411-479a58ee2508" />
+
+
 
 **שלב 2**
 <a name="queries"></a>
