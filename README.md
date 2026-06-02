@@ -308,10 +308,14 @@ Commit: ביצוע עדכון קומה למחלקה ואישורו הסופי ב
 
 טבלת ה ERD ו ה DSD של הזוג השני 
 
-<img width="2000" height="750" alt="DSD זוג שני " src="https://github.com/user-attachments/assets/3864f12e-c84c-40db-a2d7-e66cfdf0a93d" />
-<img width="2000" height="750" alt="ERD זוג שני " src="https://github.com/user-attachments/assets/a17c80a7-0b78-4f8e-bcb4-31b201259435" />
+<table>
+  <tr>
+    <td><img width="1000" height="375" alt="DSD" src="https://github.com/user-attachments/assets/3864f12e-c84c-40db-a2d7-e66cfdf0a93d"></td>
+    <td><img width="1000" height="375" alt="ERD" src="https://github.com/user-attachments/assets/a17c80a7-0b78-4f8e-bcb4-31b201259435"></td>
+  </tr>
+</table>
 
-ואחרי החיבור שלנו השתמשנו ב 2 טבלאות ובשביל לא ליצור הרבה בלגן בעין אז חיברנו את שני הטבלאות ע"י גשר
+**ואחרי החיבור שלנו השתמשנו ב 2 טבלאות ובשביל לא ליצור הרבה בלגן בעין אז חיברנו את שני הטבלאות ע"י גשר**
 <img width="3984" height="1509" alt="אינטגרציה ERD" src="https://github.com/user-attachments/assets/06ec9c31-017d-4483-a72b-c95ee4cba2c3" />
 
 <img width="3984" height="1509" alt="אינטגרציה DSD" src="https://github.com/user-attachments/assets/1fd41f8e-5e1f-466f-8154-3bf1f84c5a7a" />
