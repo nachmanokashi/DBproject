@@ -45,7 +45,7 @@ $$;
 
 -- בדיקה של הפרוצדורה
 
-SELECT admission_id, admission_date, risk_level
+SELECT admission_id, admission_date, risk_level,review_status
 FROM public.admissions
 WHERE CURRENT_DATE - admission_date > 30 
 LIMIT 10;
