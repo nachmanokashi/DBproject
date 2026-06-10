@@ -17,7 +17,5 @@ BEGIN
     CALL public.flag_long_term_patients(30, v_cursor_name);
     
     RAISE NOTICE 'Maintenance sequence completed. Check cursor % for results.', v_cursor_name;
-    
-    -- הערה: בממשק של Supabase, אחרי הרצה כזו, 
-    -- ניתן להריץ FETCH ALL FROM my_long_term_cursor; בנפרד כדי לראות את הרשימה.
+
 END $$;

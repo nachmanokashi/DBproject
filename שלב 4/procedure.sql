@@ -6,43 +6,37 @@
 --, ומטפלת בשגיאות אפשריות במהלך התהליך.
 CREATE OR REPLACE PROCEDURE flag_long_term_patients(
     p_min_days INT,
-    INOUT p_cursor REFCURSOR -- (b) החזרת Ref Cursor
+    INOUT p_cursor REFCURSOR
 )
 LANGUAGE plpgsql AS $$
 DECLARE
-    r_patient RECORD; -- (g) Record
+    r_patient RECORD;
     v_found_count INT := 0;
-    -- (a) Explicit Cursor: שליפת כל המטופלים שעברו את מכסת הימים
     c_long_term CURSOR FOR
         SELECT admission_id, patient_id
         FROM public.admissions
         WHERE CURRENT_DATE - admission_date > p_min_days
-          AND risk_level != 'Long Term Review';
+          AND review_status != 'Long Term Review'; -- שינוי לעמודה החדשה
 BEGIN
-    -- (d) Branching: בדיקת תקינות הקלט
     IF p_min_days < 0 THEN
         RAISE EXCEPTION 'Days cannot be negative';
     END IF;
 
-    -- (e) Loops: מעבר על הרשימה
     FOR r_patient IN c_long_term LOOP
-        -- (c) DML (UPDATE): עדכון רמת הסיכון של המטופל
         UPDATE public.admissions
-        SET risk_level = 'Long Term Review'
+        SET review_status = 'Long Term Review' -- מעדכן את הסטטוס המנהלתי בלבד!
         WHERE admission_id = r_patient.admission_id;
         
         v_found_count := v_found_count + 1;
     END LOOP;
 
-    -- (b) Ref Cursor: פתיחת הסמן כדי להחזיר את הרשימה למשתמש/UI
     OPEN p_cursor FOR
-        SELECT admission_id, patient_id, admission_date
+        SELECT admission_id, patient_id, admission_date, risk_level, review_status
         FROM public.admissions
-        WHERE risk_level = 'Long Term Review';
+        WHERE review_status = 'Long Term Review';
 
     RAISE NOTICE 'Flagged % patients as Long Term.', v_found_count;
-
-EXCEPTION -- (f) Exception Handling
+EXCEPTION
     WHEN OTHERS THEN
         RAISE NOTICE 'Error processing long-term patients: %', SQLERRM;
         ROLLBACK; 
@@ -88,11 +82,10 @@ DECLARE
     v_old_dept_id INT;
     c_patient_info REFCURSOR;
 BEGIN
-    -- 1. שימוש ב-REF CURSOR כדי לשלוף את המחלקה הנוכחית (שימוש ב-dept_id הנכון)
+    -- 1. שימוש ב-REF CURSOR כדי לשלוף את המחלקה הנוכחית 
     OPEN c_patient_info FOR 
         SELECT dept_id FROM public.admissions 
         WHERE patient_id = p_patient_id 
-        -- נניח שאין עמודת discharge_date אז נסיר את התנאי הזה או נשתמש בקיים
         ORDER BY admission_date DESC LIMIT 1;
     
     FETCH c_patient_info INTO v_old_dept_id;
@@ -103,12 +96,12 @@ BEGIN
         RAISE EXCEPTION 'Patient is not currently admitted or not found.';
     END IF;
 
-    -- 2. עדכון מחלקת המטופל (תיקון ל-dept_id)
+    -- 2. עדכון מחלקת המטופל 
     UPDATE public.admissions 
     SET dept_id = p_new_dept_id
     WHERE patient_id = p_patient_id;
 
-    -- 3. כתיבה ליומן ההעברות (תיקון ל-old_department_id ל-old_dept_id אם צריך או התאמה לשם העמודה בטבלה שיצרת)
+    -- 3. כתיבה ליומן ההעברות 
     INSERT INTO public.department_transfers_log (patient_id, old_department_id, new_department_id, staff_id, notes)
     VALUES (p_patient_id, v_old_dept_id, p_new_dept_id, p_staff_id, p_notes);
 

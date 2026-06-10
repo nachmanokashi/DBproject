@@ -86,36 +86,51 @@ CREATE OR REPLACE FUNCTION rebalance_and_audit_department(
 ) 
 RETURNS REFCURSOR AS $$
 DECLARE
-    r_doc RECORD; 
-    v_avg_load FLOAT;
-    v_moved_count INT := 0;
-    c_doctors CURSOR FOR 
-        SELECT doctor_id FROM public.doctors WHERE dept_id = p_dept_id;
+    v_doctor_count INT;
 BEGIN
     IF p_dept_id IS NULL THEN
         RAISE EXCEPTION 'Department ID cannot be null';
     END IF;
 
-    SELECT COUNT(*)::FLOAT / NULLIF((SELECT COUNT(*) FROM public.doctors WHERE dept_id = p_dept_id), 0)
-    INTO v_avg_load
-    FROM public.admissions WHERE dept_id = p_dept_id;
+    -- בדיקה כמה רופאים יש במחלקה
+    SELECT COUNT(*) INTO v_doctor_count 
+    FROM public.doctors 
+    WHERE dept_id = p_dept_id;
 
-    FOR r_doc IN c_doctors LOOP
-        UPDATE public.admissions
-        SET doctor_id = r_doc.doctor_id
-        WHERE admission_id IN (
-            SELECT admission_id FROM public.admissions 
-            WHERE doctor_id IN (SELECT doctor_id FROM public.doctors WHERE dept_id = p_dept_id)
-            LIMIT 1
-        );
-        v_moved_count := v_moved_count + 1;
-    END LOOP;
+    IF v_doctor_count = 0 THEN
+        RAISE EXCEPTION 'No doctors found in department %', p_dept_id;
+    END IF;
 
+    -- עדכון חכם: חלוקת החולים באופן שווה באמצעות דירוג (Row Number) מול דירוג הרופאים
+    WITH ranked_patients AS (
+        SELECT admission_id,
+               ROW_NUMBER() OVER (ORDER BY admission_id) - 1 AS patient_idx
+        FROM public.admissions
+        WHERE dept_id = p_dept_id
+    ),
+    ranked_doctors AS (
+        SELECT doctor_id,
+               ROW_NUMBER() OVER (ORDER BY doctor_id) - 1 AS doctor_idx
+        FROM public.doctors
+        WHERE dept_id = p_dept_id
+    ),
+    balanced_assignments AS (
+        SELECT p.admission_id, d.doctor_id
+        FROM ranked_patients p
+        JOIN ranked_doctors d ON (p.patient_idx % v_doctor_count) = d.doctor_idx
+    )
+    UPDATE public.admissions a
+    SET doctor_id = b.doctor_id
+    FROM balanced_assignments b
+    WHERE a.admission_id = b.admission_id;
+
+    -- פתיחת הסמן לטובת הדוח הסופי
     OPEN p_ref_cursor FOR 
         SELECT doctor_id, COUNT(*) as final_load 
         FROM public.admissions 
         WHERE dept_id = p_dept_id 
-        GROUP BY doctor_id;
+        GROUP BY doctor_id
+        ORDER BY final_load DESC;
 
 EXCEPTION
     WHEN OTHERS THEN
@@ -123,18 +138,6 @@ EXCEPTION
         RAISE; 
 END;
 $$ LANGUAGE plpgsql;
-
--- בדיקת הפונקציה
--- שלב א': נבדוק את העומס הנוכחי של הרופאים במחלקה 1
-SELECT 
-    d.doctor_id, 
-    d.doctor_name, 
-    COUNT(a.admission_id) as patient_count
-FROM public.doctors d
-LEFT JOIN public.admissions a ON d.doctor_id = a.doctor_id
-WHERE d.dept_id = 9
-GROUP BY d.doctor_id, d.doctor_name
-ORDER BY patient_count DESC;
 
 -- הרצת הפונקציה 
 -- שלב ב': נריץ את הפונקציה לאיזון מחדש של המחלקה 5 
