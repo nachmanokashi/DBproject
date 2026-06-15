@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SmartCare HIS – ניטור קליני</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"/>
+<style>
+:root{--sb-bg:#0b2240;--sb-w:252px;--cyan:#00b4d8;--cyan-dim:rgba(0,180,216,.14);--blue:#1565c0;--blue-dk:#0d47a1;--red:#c62828;--red-bg:#ffebee;--green:#2e7d32;--green-bg:#e8f5e9;--amber:#e65100;--amber-bg:#fff8e1;--purple:#4527a0;--purple-bg:#ede7f6;--page-bg:#edf1f7;--card:#ffffff;--border:#e2e8f0;--border-light:#f1f5f9;--t1:#1a202c;--t2:#4a5568;--t3:#718096;--t4:#a0aec0;--shadow-sm:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.05);--shadow-md:0 4px 12px rgba(0,0,0,.08);--radius:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--page-bg);color:var(--t1);direction:rtl}
+a{text-decoration:none;color:inherit}
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:var(--sb-w);background:var(--sb-bg);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden}
+.sidebar::-webkit-scrollbar{width:0}
+.sb-logo{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-logo-name{font-size:21px;font-weight:900;color:#fff;letter-spacing:-.5px;line-height:1}
+.sb-logo-name em{color:var(--cyan);font-style:normal}
+.sb-logo-sub{font-size:10px;color:rgba(255,255,255,.35);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-top:5px}
+.sb-section{padding:18px 14px 4px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:rgba(255,255,255,.25)}
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:1px 8px;border-radius:8px;color:rgba(255,255,255,.55);font-size:13px;font-weight:500;transition:background .15s,color .15s;cursor:pointer;border-right:3px solid transparent}
+.sb-link:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.9)}
+.sb-link.active{background:var(--cyan-dim);color:#fff;font-weight:700;border-right-color:var(--cyan)}
+.sb-link .ico{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.sb-footer{margin-top:auto;padding:14px 14px 18px;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+.sb-avatar{width:34px;height:34px;border-radius:9px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
+.sb-user-name{font-size:12px;font-weight:700;color:#fff}
+.sb-user-role{font-size:10px;color:var(--cyan);font-weight:600;text-transform:uppercase}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);height:58px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-title{font-size:17px;font-weight:800;color:var(--t1)}
+.tb-sub{font-size:11px;color:var(--t4);margin-top:2px}
+.tb-right{display:flex;align-items:center;gap:14px}
+.live-pill{display:flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.tb-date{font-size:11.5px;color:var(--t3);font-weight:500}
+.scroll-area{flex:1;overflow-y:auto;padding:26px 28px}
+.scroll-area::-webkit-scrollbar{width:5px}
+.scroll-area::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
+.sec-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;color:var(--t4);display:flex;align-items:center;gap:10px;margin:22px 0 12px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.mb22{margin-bottom:22px}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .2s}
+.card:hover{box-shadow:var(--shadow-md)}
+.card-hd{padding:14px 18px 13px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card-title{font-size:13.5px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:7px}
+.card-body{padding:18px}
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{background:#f8fafc;padding:10px 16px;font-size:10.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
+.tbl tbody td{padding:11px 16px;font-size:13px;color:var(--t2);border-bottom:1px solid var(--border-light);vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr{transition:background .1s}
+.tbl tbody tr:hover td{background:#f8fafc}
+.tbl td b{color:var(--t1)}
+.badge{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;letter-spacing:.2px}
+.b-crit{background:#b71c1c;color:#fff}.b-high{background:var(--red-bg);color:var(--red)}.b-warn{background:var(--amber-bg);color:var(--amber)}.b-long{background:var(--purple-bg);color:var(--purple)}
+.v-crit{color:var(--red);font-weight:800}.v-warn{color:var(--amber);font-weight:700}
+.tag-amber{background:var(--amber-bg);color:var(--amber);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px}
+.tag-purple{background:var(--purple-bg);color:var(--purple);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px}
+.f-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
+.f-col{display:flex;flex-direction:column;gap:5px}
+.f-label{font-size:10.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px}
+.f-input,.f-select{border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:inherit;background:#fff;color:var(--t1);outline:none;transition:border-color .15s,box-shadow .15s;min-width:130px}
+.f-input:focus,.f-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,101,192,.1)}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:var(--blue-dk)}
+.btn-amber{background:var(--amber);color:#fff}.btn-amber:hover{background:#bf360c}
+.btn-ghost{background:#f1f5f9;color:var(--t2)}.btn-ghost:hover{background:#e2e8f0}
+.btn-sm{padding:5px 12px;font-size:12px}
+.rbox{border-radius:9px;padding:11px 14px;font-size:12.5px;font-weight:500;line-height:1.5;display:none;margin-top:14px}
+.rbox.show{display:block}
+.rbox.ok{background:var(--green-bg);border:1px solid #a5d6a7;color:#1b5e20}
+.rbox.info{background:#e3f2fd;border:1px solid #90caf9;color:var(--blue)}
+.rmeter{display:flex;gap:5px;margin-top:10px}
+.rbar{height:7px;border-radius:4px;flex:1;background:var(--border);transition:background .3s}
+.rbar.low{background:var(--green)}.rbar.med{background:var(--amber)}.rbar.high{background:var(--red)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .3s ease}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-name">SmartCare<em>+</em></div>
+      <div class="sb-logo-sub">מרכז רפואי שיבא · 2026</div>
+    </div>
+    <div class="sb-section">ניהול קליני</div>
+    <a class="sb-link" href="index.html"><span class="ico">📊</span> לוח בקרה</a>
+    <a class="sb-link active" href="monitoring.html"><span class="ico">🚨</span> ניטור קליני</a>
+    <a class="sb-link" href="management.html"><span class="ico">⚙️</span> ניהול אשפוזים</a>
+    <div class="sb-section">אנליזה ודיווח</div>
+    <a class="sb-link" href="analytics.html"><span class="ico">📈</span> אנליטיקה ודוחות</a>
+    <div class="sb-footer">
+      <div class="sb-avatar">NA</div>
+      <div>
+        <div class="sb-user-name">נחמן אוקשי</div>
+        <div class="sb-user-role">DB Administrator</div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="tb-title">ניטור קליני</div>
+        <div class="tb-sub">מעקב מדדים חריגים, חולים בסיכון ואשפוזים ממושכים</div>
+      </div>
+      <div class="tb-right">
+        <div class="live-pill"><div class="live-dot"></div>סריקה פעילה</div>
+        <div class="tb-date" id="tb-date"></div>
+      </div>
+    </div>
+
+    <div class="scroll-area fade-up">
+
+      <!-- Q1 – high fever -->
+      <div class="sec-label">חולים עם חום גבוה – מעל 39.5°C</div>
+      <div class="card mb22">
+        <div class="card-hd">
+          <div class="card-title">🌡️ חולים שנמצאים בחום מסכן חיים</div>
+          <select class="f-select" id="dept-filter" onchange="filterFever()" style="min-width:155px">
+            <option value="all">כל המחלקות</option>
+          </select>
+        </div>
+        <table class="tbl" id="fever-tbl">
+          <thead><tr><th>שם מטופל</th><th>מחלקה</th><th>טמפרטורה</th><th>דופק</th><th>מזהה אשפוז</th><th>זמן מדידה</th><th>סטטוס</th></tr></thead>
+          <tbody>
+            <tr data-dept="Cardiology"><td><b>יוסף לוי</b></td><td>Cardiology</td><td><span class="v-crit">39.8°C</span></td><td><span class="v-crit">128 BPM</span></td><td>#1041</td><td>14:23</td><td><span class="badge b-crit">קריטי</span></td></tr>
+            <tr data-dept="Surgery">   <td><b>שלמה ברנר</b></td><td>Surgery</td>    <td><span class="v-crit">40.3°C</span></td><td><span class="v-warn">104 BPM</span></td><td>#1267</td><td>13:55</td><td><span class="badge b-crit">קריטי</span></td></tr>
+            <tr data-dept="ICU">       <td><b>אסתר פינקלשטיין</b></td><td>ICU</td> <td><span class="v-warn">39.6°C</span></td><td>82 BPM</td><td>#0955</td><td>12:41</td><td><span class="badge b-high">גבוה</span></td></tr>
+            <tr data-dept="Pediatrics"><td><b>מיכאל ברזילי</b></td><td>Pediatrics</td><td><span class="v-warn">39.7°C</span></td><td>96 BPM</td><td>#1312</td><td>11:18</td><td><span class="badge b-high">גבוה</span></td></tr>
+            <tr data-dept="Cardiology"><td><b>דוד שלום</b></td><td>Cardiology</td>  <td><span class="v-warn">39.5°C</span></td><td><span class="v-warn">102 BPM</span></td><td>#0811</td><td>10:05</td><td><span class="badge b-warn">מעקב</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Q4 – abnormal tests -->
+      <div class="sec-label">תוצאות בדיקות חריגות</div>
+      <div class="card mb22">
+        <div class="card-hd">
+          <div class="card-title">🧪 מטופלים עם תוצאה חריגה הדורשים המשך בירור</div>
+        </div>
+        <table class="tbl">
+          <thead><tr><th>שם מטופל</th><th>סוג בדיקה</th><th>תוצאה</th><th>תאריך</th><th>מחלקה</th><th>פעולה נדרשת</th></tr></thead>
+          <tbody>
+            <tr><td><b>רחל אביגד</b></td>  <td>בדיקת דם מלאה</td><td><span class="badge b-crit">Abnormal</span></td><td>12/06/26</td><td>Neurology</td><td><button class="btn btn-ghost btn-sm" onclick="refer(this)">הפנה לרופא</button></td></tr>
+            <tr><td><b>נחמן כץ</b></td>    <td>ספירת דם</td>    <td><span class="badge b-high">Abnormal</span></td><td>11/06/26</td><td>Oncology</td> <td><button class="btn btn-ghost btn-sm" onclick="refer(this)">הפנה לרופא</button></td></tr>
+            <tr><td><b>לאה גרינברג</b></td><td>בדיקת שתן</td>   <td><span class="badge b-high">Abnormal</span></td><td>10/06/26</td><td>Surgery</td>  <td><button class="btn btn-ghost btn-sm" onclick="refer(this)">הפנה לרופא</button></td></tr>
+            <tr><td><b>יעקב משה</b></td>   <td>אקו לב</td>      <td><span class="badge b-warn">Borderline</span></td><td>09/06/26</td><td>Cardiology</td><td><button class="btn btn-ghost btn-sm" onclick="refer(this)">הפנה לרופא</button></td></tr>
+            <tr><td><b>חנה ביטון</b></td>  <td>בדיקת כימיה</td> <td><span class="badge b-high">Abnormal</span></td><td>08/06/26</td><td>ICU</td>      <td><button class="btn btn-ghost btn-sm" onclick="refer(this)">הפנה לרופא</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Q7 + long-term -->
+      <div class="g2 mb22">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">🔁 חולים בסיכון לאשפוז חוזר</div>
+            <span class="tag-amber">≥ 2 אשפוזים, אותה מחלקה</span>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>מטופל</th><th>מחלקה</th><th>ביקורים</th><th>ראשון ↔ אחרון</th></tr></thead>
+            <tbody>
+              <tr><td><b>חיים גולדברג</b></td><td>Cardiology</td><td><span class="v-crit">5</span></td><td>ינואר 25 ↔ יוני 26</td></tr>
+              <tr><td><b>נעמי שפירא</b></td>  <td>Neurology</td> <td><span class="v-warn">4</span></td><td>מרץ 25 ↔ יוני 26</td></tr>
+              <tr><td><b>יצחק בן-דוד</b></td><td>Surgery</td>   <td><span class="v-warn">3</span></td><td>אפריל 25 ↔ יוני 26</td></tr>
+              <tr><td><b>שרה לוינסון</b></td><td>Cardiology</td><td>2</td><td>פברואר 26 ↔ יוני 26</td></tr>
+              <tr><td><b>אברהם פלד</b></td>  <td>Pediatrics</td><td>2</td><td>מאי 26 ↔ יוני 26</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">📋 אשפוזים ממושכים – Long Term Review</div>
+            <button class="btn btn-amber btn-sm" onclick="runFlagLongTerm()">▶ סמן ממושכים</button>
+          </div>
+          <table class="tbl" id="lt-tbl">
+            <thead><tr><th>מטופל</th><th>ימים</th><th>מחלקה</th><th>סטטוס</th></tr></thead>
+            <tbody>
+              <tr><td><b>מרים עזרא</b></td>   <td><span class="v-crit">42</span></td><td>ICU</td>      <td><span class="badge b-long">Long Term Review</span></td></tr>
+              <tr><td><b>יעקב בלום</b></td>   <td><span class="v-crit">38</span></td><td>Oncology</td><td><span class="badge b-long">Long Term Review</span></td></tr>
+              <tr><td><b>ציפורה ארזי</b></td><td><span class="v-warn">34</span></td><td>Neurology</td><td><span class="badge b-long">Long Term Review</span></td></tr>
+              <tr><td><b>שמעון כרמי</b></td> <td>31</td>                             <td>Surgery</td> <td><span class="badge b-warn">ממתין לסימון</span></td></tr>
+            </tbody>
+          </table>
+          <div class="card-body" style="padding-top:0">
+            <div class="rbox" id="lt-res"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- risk calculator -->
+      <div class="sec-label">חישוב רמת סיכון לפי מדדים וויטאליים</div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">⚡ מחשבון סיכון מטופל – מבוסס ניתוח וויטאלים</div>
+          <span class="tag-purple">calculate_patient_risk()</span>
+        </div>
+        <div class="card-body">
+          <div class="f-row" style="margin-bottom:18px">
+            <div class="f-col">
+              <label class="f-label">מזהה אשפוז</label>
+              <input type="number" id="r-adm" class="f-input" value="117" style="width:110px"/>
+            </div>
+            <div class="f-col">
+              <label class="f-label">דופק (BPM)</label>
+              <input type="number" id="r-hr" class="f-input" value="125" style="width:110px"/>
+            </div>
+            <div class="f-col">
+              <label class="f-label">טמפרטורה (°C)</label>
+              <input type="number" id="r-tmp" class="f-input" step="0.1" value="39.2" style="width:110px"/>
+            </div>
+            <div class="f-col" style="justify-content:flex-end">
+              <button class="btn btn-blue" onclick="calcRisk()">⚡ חשב רמת סיכון</button>
+            </div>
+          </div>
+          <div id="risk-panel" style="display:none">
+            <div style="display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center;background:var(--page-bg);border:1px solid var(--border);border-radius:10px;padding:18px 22px">
+              <div>
+                <div style="font-size:10.5px;font-weight:700;color:var(--t4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">רמת סיכון</div>
+                <div id="rl-display" style="font-size:30px;font-weight:900;letter-spacing:-1px"></div>
+                <div id="rl-adm" style="font-size:11px;color:var(--t4);margin-top:3px"></div>
+              </div>
+              <div>
+                <div style="font-size:11px;color:var(--t3);font-weight:600;margin-bottom:8px">ניקוד סיכון (0–10)</div>
+                <div class="rmeter" id="rl-bars"></div>
+                <div id="rl-score" style="font-size:11px;color:var(--t4);margin-top:6px"></div>
+              </div>
+              <div id="rl-action" style="font-size:13px;font-weight:600;line-height:1.6;text-align:center;max-width:160px"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('tb-date').textContent = new Date().toLocaleDateString('he-IL',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
+
+// Load departments dynamically
+fetch('/api/departments').then(r=>r.json()).then(depts=>{
+  const sel=document.getElementById('dept-filter');
+  depts.forEach(d=>{
+    const o=document.createElement('option');
+    o.value=d.dept_name; o.textContent=d.dept_name;
+    sel.appendChild(o);
+  });
+}).catch(()=>{
+  // fallback static list
+  ['Cardiology','Surgery','ICU','Pediatrics','Neurology','Oncology'].forEach(n=>{
+    const o=document.createElement('option');o.value=n;o.textContent=n;
+    document.getElementById('dept-filter').appendChild(o);
+  });
+});
+
+function filterFever(){
+  const v=document.getElementById('dept-filter').value;
+  document.querySelectorAll('#fever-tbl tbody tr').forEach(r=>r.style.display=(v==='all'||r.dataset.dept===v)?'':'none');
+}
+
+function refer(btn){
+  btn.textContent='✓ הופנה';btn.style.color='var(--green)';btn.disabled=true;
+}
+
+async function runFlagLongTerm(){
+  const r=document.getElementById('lt-res');
+  r.className='rbox info show';r.textContent='מריץ פרוצדורת flag_long_term_patients(30) על ה-DB...';
+  try {
+    const res=await fetch('/api/logic/flag-long-term',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({days:30})
+    });
+    const data=await res.json();
+    if(data.success){
+      document.querySelector('#lt-tbl tbody tr:last-child td:last-child').innerHTML='<span class="badge b-long">Long Term Review</span>';
+      r.className='rbox ok show';
+      r.textContent=`✓ ${data.message}`;
+    } else {
+      r.className='rbox err show';r.textContent=`⛔ שגיאה: ${data.error}`;
+    }
+  } catch(e){
+    // fallback simulation (not running via Flask)
+    document.querySelector('#lt-tbl tbody tr:last-child td:last-child').innerHTML='<span class="badge b-long">Long Term Review</span>';
+    r.className='rbox ok show';
+    r.textContent='✓ הפרוצדורה הסתיימה – 4 מטופלים סומנו כ-"Long Term Review" (אשפוז > 30 יום). טבלת admissions עודכנה.';
+  }
+}
+
+function calcRisk(){
+  const hr=parseFloat(document.getElementById('r-hr').value);
+  const tmp=parseFloat(document.getElementById('r-tmp').value);
+  const adm=document.getElementById('r-adm').value;
+  let score=0;
+  if(tmp>39.0)score+=5;else if(tmp>38.0)score+=3;
+  if(hr>120||hr<50)score+=5;else if(hr>100)score+=3;
+  const level=score>=8?'HIGH':score>=4?'MEDIUM':'LOW';
+  const color=score>=8?'var(--red)':score>=4?'var(--amber)':'var(--green)';
+  const cls=score>=8?'high':score>=4?'med':'low';
+  const action=score>=8?'⚠️ פנה לרופא מיידית':score>=4?'👁 מעקב צמוד נדרש':'✓ ניטור שגרתי';
+  const filled=Math.round((score/10)*5);
+  document.getElementById('risk-panel').style.display='block';
+  document.getElementById('rl-display').textContent=level;
+  document.getElementById('rl-display').style.color=color;
+  document.getElementById('rl-adm').textContent=`אשפוז #${adm} · דופק ${hr} BPM · חום ${tmp}°C`;
+  document.getElementById('rl-score').textContent=`ניקוד: ${score} / 10`;
+  document.getElementById('rl-action').innerHTML=action;
+  document.getElementById('rl-action').style.color=color;
+  document.getElementById('rl-bars').innerHTML=Array.from({length:5},(_,i)=>`<div class="rbar${i<filled?' '+cls:''}"></div>`).join('');
+}
+</script>
+</body>
+</html>

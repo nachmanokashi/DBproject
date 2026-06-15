@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SmartCare HIS – לוח בקרה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--sb-bg:#0b2240;--sb-w:252px;--cyan:#00b4d8;--cyan-dim:rgba(0,180,216,.14);--blue:#1565c0;--blue-dk:#0d47a1;--red:#c62828;--red-bg:#ffebee;--green:#2e7d32;--green-bg:#e8f5e9;--amber:#e65100;--amber-bg:#fff8e1;--purple:#4527a0;--purple-bg:#ede7f6;--page-bg:#edf1f7;--card:#ffffff;--border:#e2e8f0;--border-light:#f1f5f9;--t1:#1a202c;--t2:#4a5568;--t3:#718096;--t4:#a0aec0;--shadow-sm:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.05);--shadow-md:0 4px 12px rgba(0,0,0,.08);--radius:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--page-bg);color:var(--t1);direction:rtl}
+a{text-decoration:none;color:inherit}
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:var(--sb-w);background:var(--sb-bg);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden}
+.sidebar::-webkit-scrollbar{width:0}
+.sb-logo{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-logo-name{font-size:21px;font-weight:900;color:#fff;letter-spacing:-.5px;line-height:1}
+.sb-logo-name em{color:var(--cyan);font-style:normal}
+.sb-logo-sub{font-size:10px;color:rgba(255,255,255,.35);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-top:5px}
+.sb-section{padding:18px 14px 4px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:rgba(255,255,255,.25)}
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:1px 8px;border-radius:8px;color:rgba(255,255,255,.55);font-size:13px;font-weight:500;transition:background .15s,color .15s;cursor:pointer;border-right:3px solid transparent}
+.sb-link:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.9)}
+.sb-link.active{background:var(--cyan-dim);color:#fff;font-weight:700;border-right-color:var(--cyan)}
+.sb-link .ico{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.sb-footer{margin-top:auto;padding:14px 14px 18px;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+.sb-avatar{width:34px;height:34px;border-radius:9px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
+.sb-user-name{font-size:12px;font-weight:700;color:#fff}
+.sb-user-role{font-size:10px;color:var(--cyan);font-weight:600;text-transform:uppercase}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);height:58px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-title{font-size:17px;font-weight:800;color:var(--t1)}
+.tb-sub{font-size:11px;color:var(--t4);margin-top:2px}
+.tb-right{display:flex;align-items:center;gap:14px}
+.live-pill{display:flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.tb-date{font-size:11.5px;color:var(--t3);font-weight:500}
+.scroll-area{flex:1;overflow-y:auto;padding:26px 28px}
+.scroll-area::-webkit-scrollbar{width:5px}
+.scroll-area::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
+.sec-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;color:var(--t4);display:flex;align-items:center;gap:10px;margin:22px 0 12px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.mb22{margin-bottom:22px}
+.stat{background:var(--card);border-radius:var(--radius);padding:18px 20px;border:1px solid var(--border);box-shadow:var(--shadow-sm);position:relative;overflow:hidden;transition:box-shadow .2s}
+.stat:hover{box-shadow:var(--shadow-md)}
+.stat::after{content:'';position:absolute;left:0;top:0;width:4px;height:100%;background:var(--blue)}
+.stat.red::after{background:var(--red)}
+.stat.green::after{background:var(--green)}
+.stat.amber::after{background:var(--amber)}
+.stat-lbl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t4)}
+.stat-val{font-size:30px;font-weight:900;color:var(--t1);margin-top:6px;letter-spacing:-1px;line-height:1}
+.stat-val.blue{color:var(--blue)}.stat-val.red{color:var(--red)}.stat-val.green{color:var(--green)}.stat-val.amber{color:var(--amber)}
+.stat-sub{font-size:11px;color:var(--t4);margin-top:5px}
+.stat-ico{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:34px;opacity:.1}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .2s}
+.card:hover{box-shadow:var(--shadow-md)}
+.card-hd{padding:14px 18px 13px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card-title{font-size:13.5px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:7px}
+.card-body{padding:18px}
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{background:#f8fafc;padding:10px 16px;font-size:10.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
+.tbl tbody td{padding:11px 16px;font-size:13px;color:var(--t2);border-bottom:1px solid var(--border-light);vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr{transition:background .1s}
+.tbl tbody tr:hover td{background:#f8fafc}
+.tbl td b{color:var(--t1)}
+.badge{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;letter-spacing:.2px}
+.b-crit{background:#b71c1c;color:#fff}.b-high{background:var(--red-bg);color:var(--red)}.b-warn{background:var(--amber-bg);color:var(--amber)}.b-stable{background:var(--green-bg);color:var(--green)}.b-long{background:var(--purple-bg);color:var(--purple)}
+.v-crit{color:var(--red);font-weight:800}.v-warn{color:var(--amber);font-weight:700}
+.alert{border-radius:var(--radius);padding:13px 16px;display:flex;align-items:flex-start;gap:12px;margin-bottom:20px;border:1px solid}
+.alert.crit{background:var(--red-bg);border-color:#ffcdd2}
+.alert-ico{font-size:19px;flex-shrink:0;margin-top:1px}
+.alert-title{font-size:13px;font-weight:800}.alert-title.crit{color:var(--red)}
+.alert-sub{font-size:12px;color:var(--t2);margin-top:3px;line-height:1.5}
+.tag-blue{background:#e3f2fd;color:var(--blue);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px}
+.tag-cyan{background:rgba(0,180,216,.1);color:#006064;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px}
+.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
+.btn:active{transform:scale(.97)}
+.btn-ghost{background:#f1f5f9;color:var(--t2)}.btn-ghost:hover{background:#e2e8f0}
+.btn-sm{padding:5px 12px;font-size:12px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .3s ease}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-name">SmartCare<em>+</em></div>
+      <div class="sb-logo-sub">מרכז רפואי שיבא · 2026</div>
+    </div>
+    <div class="sb-section">ניהול קליני</div>
+    <a class="sb-link active" href="index.html"><span class="ico">📊</span> לוח בקרה</a>
+    <a class="sb-link" href="monitoring.html"><span class="ico">🚨</span> ניטור קליני</a>
+    <a class="sb-link" href="management.html"><span class="ico">⚙️</span> ניהול אשפוזים</a>
+    <div class="sb-section">אנליזה ודיווח</div>
+    <a class="sb-link" href="analytics.html"><span class="ico">📈</span> אנליטיקה ודוחות</a>
+    <div class="sb-footer">
+      <div class="sb-avatar">NA</div>
+      <div>
+        <div class="sb-user-name">נחמן אוקשי</div>
+        <div class="sb-user-role">DB Administrator</div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="tb-title">לוח בקרה ראשי</div>
+        <div class="tb-sub">תמונת מצב חיה של בית החולים</div>
+      </div>
+      <div class="tb-right">
+        <div class="live-pill"><div class="live-dot"></div>מחובר לשרת</div>
+        <div class="tb-date" id="tb-date"></div>
+      </div>
+    </div>
+
+    <div class="scroll-area fade-up">
+
+      <!-- critical alert -->
+      <div class="alert crit">
+        <div class="alert-ico">🚨</div>
+        <div>
+          <div class="alert-title crit">3 מטופלים במצב קריטי – נדרשת התערבות מיידית</div>
+          <div class="alert-sub">יוסף לוי (Cardiology · דופק 128) &nbsp;·&nbsp; מרים עזרא (ICU · דופק 42) &nbsp;·&nbsp; שלמה ברנר (Surgery · חום 40.3°) — זוהו על-ידי מערכת ניטור הוויטאלים</div>
+        </div>
+      </div>
+
+      <!-- KPI -->
+      <div class="g4 mb22">
+        <div class="stat">
+          <div class="stat-lbl">אשפוזים פעילים</div>
+          <div class="stat-val blue">843</div>
+          <div class="stat-sub">↑ 12 מאתמול</div>
+          <div class="stat-ico">🏥</div>
+        </div>
+        <div class="stat red">
+          <div class="stat-lbl">בסיכון גבוה</div>
+          <div class="stat-val red">47</div>
+          <div class="stat-sub">מחייבים מעקב מיידי</div>
+          <div class="stat-ico">⚠️</div>
+        </div>
+        <div class="stat green">
+          <div class="stat-lbl">חדרים פנויים</div>
+          <div class="stat-val green">23</div>
+          <div class="stat-sub">מתוך 310 חדרים</div>
+          <div class="stat-ico">🛏️</div>
+        </div>
+        <div class="stat amber">
+          <div class="stat-lbl">ממוצע דופק</div>
+          <div class="stat-val amber">78 <span style="font-size:14px;font-weight:500">BPM</span></div>
+          <div class="stat-sub">ממוצע כלל המחלקות</div>
+          <div class="stat-ico">❤️</div>
+        </div>
+      </div>
+
+      <!-- charts -->
+      <div class="g2 mb22">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">📊 עומס אשפוזים חודשי לפי מחלקה</div>
+            <span class="tag-blue">Q5 · GROUP BY</span>
+          </div>
+          <div class="card-body"><canvas id="monthlyChart" height="185"></canvas></div>
+        </div>
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">👨‍⚕️ עומס מטופלים לפי רופא</div>
+            <span class="tag-cyan">Q6 · Aggregation</span>
+          </div>
+          <div class="card-body"><canvas id="doctorChart" height="185"></canvas></div>
+        </div>
+      </div>
+
+      <!-- critical patients -->
+      <div class="sec-label">ניטור מצב קריטי</div>
+      <div class="card mb22">
+        <div class="card-hd">
+          <div class="card-title">🔴 חולים עם מדדים חריגים – זוהו בזמן אמת</div>
+          <a href="monitoring.html" class="btn btn-ghost btn-sm">מעבר לניטור ←</a>
+        </div>
+        <table class="tbl">
+          <thead><tr><th>מטופל</th><th>מחלקה</th><th>דופק (BPM)</th><th>חום (°C)</th><th>סטטוס</th><th>איש קשר לוגיסטי</th></tr></thead>
+          <tbody>
+            <tr><td><b>יוסף לוי</b></td><td>Cardiology</td><td><span class="v-crit">128</span></td><td><span class="v-crit">39.8</span></td><td><span class="badge b-crit">CRITICAL</span></td><td>סא"ל רמי ברוש</td></tr>
+            <tr><td><b>מרים עזרא</b></td><td>ICU</td><td><span class="v-crit">42</span></td><td><span class="v-crit">40.1</span></td><td><span class="badge b-crit">BRADYCARDIA</span></td><td>סא"ל רמי ברוש</td></tr>
+            <tr><td><b>שלמה ברנר</b></td><td>Surgery</td><td><span class="v-warn">104</span></td><td><span class="v-crit">40.3</span></td><td><span class="badge b-high">HIGH TEMP</span></td><td>ד"ר עמי גל</td></tr>
+            <tr><td><b>רחל אביגד</b></td><td>Neurology</td><td><span class="v-warn">112</span></td><td>38.2</td><td><span class="badge b-high">HIGH</span></td><td>רס"ן דנה מזרחי</td></tr>
+            <tr><td><b>אסתר פינקלשטיין</b></td><td>Oncology</td><td>74</td><td><span class="v-warn">39.1</span></td><td><span class="badge b-warn">WATCH</span></td><td>רס"ן דנה מזרחי</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- bottom row -->
+      <div class="g2">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">🏢 עומס אשפוזים לפי מחלקה – יוני 2026</div></div>
+          <table class="tbl">
+            <thead><tr><th>מחלקה</th><th>קומה</th><th>אשפוזים</th><th>מגמה</th></tr></thead>
+            <tbody>
+              <tr><td><b>Surgery</b></td><td>4</td><td><b>213</b></td><td><span style="color:var(--red)">↑ +8%</span></td></tr>
+              <tr><td><b>Cardiology</b></td><td>3</td><td><b>184</b></td><td><span style="color:var(--red)">↑ +3%</span></td></tr>
+              <tr><td><b>Neurology</b></td><td>2</td><td><b>142</b></td><td><span style="color:var(--t4)">→ יציב</span></td></tr>
+              <tr><td><b>Pediatrics</b></td><td>1</td><td><b>118</b></td><td><span style="color:var(--green)">↓ -2%</span></td></tr>
+              <tr><td><b>ICU</b></td><td>5</td><td><b>97</b></td><td><span style="color:var(--red)">↑ +15%</span></td></tr>
+              <tr><td><b>Oncology</b></td><td>2</td><td><b>89</b></td><td><span style="color:var(--t4)">→ יציב</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">🔁 חולים עם סיכון אשפוז חוזר</div>
+            <a href="monitoring.html" class="btn btn-ghost btn-sm">פירוט ←</a>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>מטופל</th><th>מחלקה</th><th>ביקורים</th><th>ביקור אחרון</th></tr></thead>
+            <tbody>
+              <tr><td><b>חיים גולדברג</b></td><td>Cardiology</td><td><span class="v-crit">5</span></td><td>01/06/2026</td></tr>
+              <tr><td><b>נעמי שפירא</b></td><td>Neurology</td><td><span class="v-warn">4</span></td><td>08/06/2026</td></tr>
+              <tr><td><b>יצחק בן-דוד</b></td><td>Surgery</td><td><span class="v-warn">3</span></td><td>10/06/2026</td></tr>
+              <tr><td><b>שרה לוינסון</b></td><td>Cardiology</td><td>2</td><td>12/06/2026</td></tr>
+              <tr><td><b>אברהם פלד</b></td><td>Pediatrics</td><td>2</td><td>13/06/2026</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('tb-date').textContent = new Date().toLocaleDateString('he-IL',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
+
+new Chart(document.getElementById('monthlyChart'),{
+  type:'bar',
+  data:{
+    labels:['ינואר','פברואר','מרץ','אפריל','מאי','יוני'],
+    datasets:[
+      {label:'Surgery',   data:[190,201,185,208,198,213],backgroundColor:'#1565c0',borderRadius:5},
+      {label:'Cardiology',data:[165,170,178,172,180,184],backgroundColor:'#00acc1',borderRadius:5},
+      {label:'ICU',       data:[72,68,80,84,88,97],       backgroundColor:'#c62828',borderRadius:5}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12,padding:12}}},scales:{y:{grid:{color:'#f1f5f9'},ticks:{font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:11}}}}}
+});
+
+new Chart(document.getElementById('doctorChart'),{
+  type:'bar',
+  data:{
+    labels:['ד"ר שחר','ד"ר מרים','ד"ר נועם','ד"ר אלון','ד"ר רינה'],
+    datasets:[{label:'מטופלים',data:[34,28,22,19,16],backgroundColor:['#c62828','#e65100','#1565c0','#2e7d32','#4527a0'],borderRadius:6}]
+  },
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#f1f5f9'},ticks:{font:{size:11}}},y:{grid:{display:false},ticks:{font:{size:12}}}}}
+});
+</script>
+</body>
+</html>

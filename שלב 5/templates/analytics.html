@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SmartCare HIS – אנליטיקה</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root{--sb-bg:#0b2240;--sb-w:252px;--cyan:#00b4d8;--cyan-dim:rgba(0,180,216,.14);--blue:#1565c0;--blue-dk:#0d47a1;--red:#c62828;--red-bg:#ffebee;--green:#2e7d32;--green-bg:#e8f5e9;--amber:#e65100;--amber-bg:#fff8e1;--purple:#4527a0;--purple-bg:#ede7f6;--page-bg:#edf1f7;--card:#ffffff;--border:#e2e8f0;--border-light:#f1f5f9;--t1:#1a202c;--t2:#4a5568;--t3:#718096;--t4:#a0aec0;--shadow-sm:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.05);--shadow-md:0 4px 12px rgba(0,0,0,.08);--radius:12px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--page-bg);color:var(--t1);direction:rtl}
+a{text-decoration:none;color:inherit}
+.app{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:var(--sb-w);background:var(--sb-bg);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden}
+.sidebar::-webkit-scrollbar{width:0}
+.sb-logo{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-logo-name{font-size:21px;font-weight:900;color:#fff;letter-spacing:-.5px;line-height:1}
+.sb-logo-name em{color:var(--cyan);font-style:normal}
+.sb-logo-sub{font-size:10px;color:rgba(255,255,255,.35);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-top:5px}
+.sb-section{padding:18px 14px 4px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:rgba(255,255,255,.25)}
+.sb-link{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:1px 8px;border-radius:8px;color:rgba(255,255,255,.55);font-size:13px;font-weight:500;transition:background .15s,color .15s;cursor:pointer;border-right:3px solid transparent}
+.sb-link:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.9)}
+.sb-link.active{background:var(--cyan-dim);color:#fff;font-weight:700;border-right-color:var(--cyan)}
+.sb-link .ico{font-size:16px;width:20px;text-align:center;flex-shrink:0}
+.sb-footer{margin-top:auto;padding:14px 14px 18px;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+.sb-avatar{width:34px;height:34px;border-radius:9px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
+.sb-user-name{font-size:12px;font-weight:700;color:#fff}
+.sb-user-role{font-size:10px;color:var(--cyan);font-weight:600;text-transform:uppercase}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.topbar{background:var(--card);border-bottom:1px solid var(--border);height:58px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.tb-title{font-size:17px;font-weight:800;color:var(--t1)}
+.tb-sub{font-size:11px;color:var(--t4);margin-top:2px}
+.tb-right{display:flex;align-items:center;gap:14px}
+.live-pill{display:flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+.tb-date{font-size:11.5px;color:var(--t3);font-weight:500}
+.scroll-area{flex:1;overflow-y:auto;padding:26px 28px}
+.scroll-area::-webkit-scrollbar{width:5px}
+.scroll-area::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
+.sec-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;color:var(--t4);display:flex;align-items:center;gap:10px;margin:22px 0 12px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.mb22{margin-bottom:22px}
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .2s}
+.card:hover{box-shadow:var(--shadow-md)}
+.card-hd{padding:14px 18px 13px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.card-title{font-size:13.5px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:7px}
+.card-body{padding:18px}
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{background:#f8fafc;padding:10px 16px;font-size:10.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
+.tbl tbody td{padding:11px 16px;font-size:13px;color:var(--t2);border-bottom:1px solid var(--border-light);vertical-align:middle}
+.tbl tbody tr:last-child td{border-bottom:none}
+.tbl tbody tr{transition:background .1s}
+.tbl tbody tr:hover td{background:#f8fafc}
+.tbl td b{color:var(--t1)}
+.badge{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;letter-spacing:.2px}
+.b-crit{background:#b71c1c;color:#fff}.b-high{background:var(--red-bg);color:var(--red)}.b-warn{background:var(--amber-bg);color:var(--amber)}
+.v-crit{color:var(--red);font-weight:800}.v-warn{color:var(--amber);font-weight:700}
+.tag-red{background:var(--red-bg);color:var(--red);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px}
+.tag-blue{background:#e3f2fd;color:var(--blue);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px}
+.f-select{border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:inherit;background:#fff;color:var(--t1);outline:none;min-width:130px}
+.f-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,101,192,.1)}
+.room-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px;padding:16px}
+.room-tile{border-radius:10px;padding:13px 8px 11px;text-align:center;border:1.5px solid;transition:transform .15s,box-shadow .15s}
+.room-tile:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+.room-tile.free{background:var(--green-bg);border-color:#81c784}
+.room-tile.occupied{background:#fce4ec;border-color:#f48fb1}
+.room-num{font-size:17px;font-weight:800;color:var(--t1)}
+.room-dept{font-size:10px;color:var(--t3);margin-top:3px;font-weight:600}
+.room-st{font-size:10px;font-weight:700;margin-top:5px}
+.room-tile.free .room-st{color:var(--green)}
+.room-tile.occupied .room-st{color:var(--red)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .3s ease}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-name">SmartCare<em>+</em></div>
+      <div class="sb-logo-sub">מרכז רפואי שיבא · 2026</div>
+    </div>
+    <div class="sb-section">ניהול קליני</div>
+    <a class="sb-link" href="index.html"><span class="ico">📊</span> לוח בקרה</a>
+    <a class="sb-link" href="monitoring.html"><span class="ico">🚨</span> ניטור קליני</a>
+    <a class="sb-link" href="management.html"><span class="ico">⚙️</span> ניהול אשפוזים</a>
+    <div class="sb-section">אנליזה ודיווח</div>
+    <a class="sb-link active" href="analytics.html"><span class="ico">📈</span> אנליטיקה ודוחות</a>
+    <div class="sb-footer">
+      <div class="sb-avatar">NA</div>
+      <div>
+        <div class="sb-user-name">נחמן אוקשי</div>
+        <div class="sb-user-role">DB Administrator</div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <div class="tb-title">אנליטיקה ודוחות</div>
+        <div class="tb-sub">ניתוח ביצועים, תרופות ומגמות קליניות</div>
+      </div>
+      <div class="tb-right">
+        <select class="f-select" style="min-width:130px">
+          <option>יוני 2026</option><option>מאי 2026</option><option>אפריל 2026</option>
+        </select>
+        <div class="live-pill"><div class="live-dot"></div>Live</div>
+        <div class="tb-date" id="tb-date"></div>
+      </div>
+    </div>
+
+    <div class="scroll-area fade-up">
+
+      <!-- Q6 – cardiology -->
+      <div class="sec-label">ביצועי מחלקת לב – ממוצעי מדדים לפי רופא (Q6)</div>
+      <div class="g2 mb22">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">❤️ קרדיולוגים – ממוצע דופק וחום</div>
+            <span class="tag-red">Cardiology · HAVING AVG > 37</span>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>רופא</th><th>מטופל</th><th>ממוצע דופק</th><th>ממוצע חום</th><th>מדידות</th></tr></thead>
+            <tbody>
+              <tr><td><b>ד"ר שחר</b></td><td>יוסף לוי</td>    <td><span class="v-crit">112.4</span></td><td><span class="v-crit">39.2</span></td><td>18</td></tr>
+              <tr><td><b>ד"ר שחר</b></td><td>דוד שלום</td>    <td><span class="v-warn">98.7</span></td> <td>37.8</td><td>12</td></tr>
+              <tr><td><b>ד"ר מרים</b></td><td>שרה לוינסון</td><td>84.2</td><td><span class="v-warn">37.6</span></td><td>21</td></tr>
+              <tr><td><b>ד"ר מרים</b></td><td>חיים גולדברג</td><td><span class="v-warn">102.1</span></td><td><span class="v-crit">38.9</span></td><td>34</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">📉 ממוצע חום לפי רופא קרדיולוג</div></div>
+          <div class="card-body"><canvas id="cardiChart" height="190"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Q8 – medication -->
+      <div class="sec-label">פופולריות תרופות – מעל 20 מרשמים פעילים (Q8)</div>
+      <div class="g2 mb22">
+        <div class="card">
+          <div class="card-hd">
+            <div class="card-title">💊 תרופות מובילות לפי כמות מרשמים</div>
+            <span class="tag-blue">COUNT DISTINCT · HAVING &gt; 20</span>
+          </div>
+          <table class="tbl">
+            <thead><tr><th>תרופה</th><th>יצרן</th><th>רופאים רושמים</th><th>מרשמים</th><th>מגמה</th></tr></thead>
+            <tbody>
+              <tr><td><b>Amoxicillin 500mg</b></td> <td>GlobalPharma</td><td>12</td><td><b>87</b></td><td><span style="color:var(--red)">↑</span></td></tr>
+              <tr><td><b>Metformin 850mg</b></td>   <td>MediLab</td>    <td>9</td> <td><b>74</b></td><td><span style="color:var(--red)">↑</span></td></tr>
+              <tr><td><b>Atorvastatin 40mg</b></td> <td>GlobalPharma</td><td>8</td><td><b>61</b></td><td><span style="color:var(--t4)">→</span></td></tr>
+              <tr><td><b>Omeprazole 20mg</b></td>   <td>PharmaCo</td>   <td>11</td><td><b>58</b></td><td><span style="color:var(--green)">↓</span></td></tr>
+              <tr><td><b>Lisinopril 10mg</b></td>   <td>MediLab</td>    <td>6</td> <td><b>43</b></td><td><span style="color:var(--red)">↑</span></td></tr>
+              <tr><td><b>Aspirin 100mg</b></td>     <td>GlobalPharma</td><td>14</td><td><b>39</b></td><td><span style="color:var(--t4)">→</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">📊 נתח שוק לפי יצרן</div></div>
+          <div class="card-body" style="display:flex;justify-content:center">
+            <canvas id="pharmaChart" height="190" style="max-width:320px"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Q3 – manufacturer filter -->
+      <div class="sec-label">מעקב רישום תרופות לפי יצרן (Q3)</div>
+      <div class="card mb22">
+        <div class="card-hd">
+          <div class="card-title">🏭 רופאים הרושמים תרופות לפי יצרן</div>
+          <select class="f-select" id="mfr" onchange="filterMfr()" style="min-width:150px">
+            <option value="GlobalPharma">GlobalPharma</option>
+            <option value="MediLab">MediLab</option>
+            <option value="PharmaCo">PharmaCo</option>
+          </select>
+        </div>
+        <table class="tbl">
+          <thead><tr><th>שם רופא</th><th>התמחות</th><th>שם תרופה</th><th>מינון</th><th>יצרן</th></tr></thead>
+          <tbody id="mfr-body">
+            <tr data-mfr="GlobalPharma"><td><b>ד"ר שחר</b></td>  <td>Cardiology</td>        <td>Aspirin 100mg</td>      <td>100mg × 1/יום</td><td>GlobalPharma</td></tr>
+            <tr data-mfr="GlobalPharma"><td><b>ד"ר אלון</b></td> <td>Internal Medicine</td><td>Amoxicillin 500mg</td>  <td>500mg × 3/יום</td><td>GlobalPharma</td></tr>
+            <tr data-mfr="GlobalPharma"><td><b>ד"ר נועם</b></td> <td>Surgery</td>           <td>Atorvastatin 40mg</td> <td>40mg × 1/לילה</td><td>GlobalPharma</td></tr>
+            <tr data-mfr="MediLab">    <td><b>ד"ר מרים</b></td> <td>Cardiology</td>        <td>Metformin 850mg</td>   <td>850mg × 2/יום</td><td>MediLab</td></tr>
+            <tr data-mfr="MediLab">    <td><b>ד"ר רינה</b></td> <td>Endocrinology</td>     <td>Lisinopril 10mg</td>   <td>10mg × 1/בוקר</td><td>MediLab</td></tr>
+            <tr data-mfr="PharmaCo">   <td><b>ד"ר יוסי</b></td> <td>Gastroenterology</td> <td>Omeprazole 20mg</td>   <td>20mg × 2/יום</td><td>PharmaCo</td></tr>
+            <tr data-mfr="PharmaCo">   <td><b>ד"ר אלון</b></td> <td>Internal Medicine</td><td>Pantoprazole 40mg</td> <td>40mg × 1/בוקר</td><td>PharmaCo</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Q2 – rooms -->
+      <div class="sec-label">זמינות חדרים – NOT EXISTS (Q2)</div>
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-title">🛏️ מפת חדרים פנויים ותפוסים</div>
+          <span style="font-size:12px;color:var(--green);font-weight:700">23 פנויים מתוך 310</span>
+        </div>
+        <div class="room-grid" id="rooms"></div>
+        <div style="padding:0 16px 14px;display:flex;gap:18px;font-size:11.5px;color:var(--t3)">
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;background:var(--green-bg);border:1.5px solid #81c784;border-radius:3px;display:inline-block"></span>פנוי</span>
+          <span style="display:flex;align-items:center;gap:6px"><span style="width:11px;height:11px;background:#fce4ec;border:1.5px solid #f48fb1;border-radius:3px;display:inline-block"></span>תפוס</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+document.getElementById('tb-date').textContent = new Date().toLocaleDateString('he-IL',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
+
+new Chart(document.getElementById('cardiChart'),{
+  type:'bar',
+  data:{
+    labels:['שחר/לוי','שחר/שלום','מרים/לוינסון','מרים/גולדברג'],
+    datasets:[
+      {label:'ממוצע חום °C',data:[39.2,37.8,37.6,38.9],backgroundColor:'#c62828',borderRadius:5},
+      {label:'דופק ÷ 10',  data:[11.24,9.87,8.42,10.21],backgroundColor:'#1565c0',borderRadius:5}
+    ]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}},scales:{y:{grid:{color:'#f1f5f9'},ticks:{font:{size:11}}},x:{grid:{display:false},ticks:{font:{size:10.5}}}}}
+});
+
+new Chart(document.getElementById('pharmaChart'),{
+  type:'doughnut',
+  data:{
+    labels:['GlobalPharma','MediLab','PharmaCo'],
+    datasets:[{data:[187,117,85],backgroundColor:['#1565c0','#2e7d32','#e65100'],borderWidth:2,borderColor:'#fff'}]
+  },
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:12},boxWidth:14,padding:12}}}}
+});
+
+function filterMfr(){
+  const v=document.getElementById('mfr').value;
+  document.querySelectorAll('#mfr-body tr').forEach(r=>r.style.display=r.dataset.mfr===v?'':'none');
+}
+filterMfr();
+
+const ROOMS=[
+  {n:'1A',d:'Cardiology',f:false},{n:'1B',d:'Cardiology',f:false},{n:'1C',d:'Cardiology',f:true},
+  {n:'2A',d:'ICU',f:false},{n:'2B',d:'ICU',f:true},{n:'2C',d:'Surgery',f:false},
+  {n:'2D',d:'Surgery',f:false},{n:'3A',d:'Surgery',f:true},{n:'3B',d:'Cardiology',f:false},
+  {n:'3C',d:'Neurology',f:true},{n:'3D',d:'Neurology',f:false},{n:'4A',d:'Pediatrics',f:true},
+  {n:'4B',d:'Pediatrics',f:false},{n:'4C',d:'Oncology',f:true},{n:'4D',d:'ICU',f:false},
+  {n:'5A',d:'Surgery',f:false},{n:'5B',d:'Cardiology',f:true},{n:'5C',d:'Neurology',f:false},
+  {n:'5D',d:'Oncology',f:true},{n:'6A',d:'Pediatrics',f:false},{n:'6B',d:'Surgery',f:true},
+  {n:'6C',d:'ICU',f:true},{n:'6D',d:'Oncology',f:false}
+];
+const grid=document.getElementById('rooms');
+ROOMS.forEach(r=>{
+  grid.innerHTML+=`<div class="room-tile ${r.f?'free':'occupied'}">
+    <div class="room-num">${r.n}</div>
+    <div class="room-dept">${r.d}</div>
+    <div class="room-st">${r.f?'פנוי':'תפוס'}</div>
+  </div>`;
+});
+</script>
+</body>
+</html>
