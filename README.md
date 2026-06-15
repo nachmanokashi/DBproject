@@ -38,6 +38,10 @@
 4. [מנגנון טריגרים (Triggers)](#3-מנגנון-טריגרים-triggers)
 5. [הוכחות הרצה ובדיקות תקינות](#4-הוכחות-הרצה-ובדיקות-תקינות)
 
+שלב 5
+
+-
+
 **שלב 1**
 <a name="overview"></a>
 
@@ -512,14 +516,13 @@ Commit: ביצוע עדכון קומה למחלקה ואישורו הסופי ב
 תוכנית זו מדמה סבב רופאים אוטומטי בחדר מיון או מחלקת אשפוז. התוכנית דוגמת מטופל בודד (אשפוז מס' 1), מפעילה את הפונקציה הקלינית שכתבנו כדי לקרוא את המדדים הרפואיים האחרונים שלו (חום ודופק), ומחשבת את רמת הסיכון שלו.
 הלוגיקה הטיפולית: אם המטופל מזוהה בסיכון גבוה (High), התוכנית מקפיצה התרעה חמורה ומזמנת מיד את פרוצדורת ההעברה הרפואית כדי להעביר אותו למחלקת טיפול נמרץ (מחלקה 2) ולתעד זאת בלוג.
 
-לפני תוכנית 1 
+לפני תוכנית 1
 
 <img width="384" height="292" alt="לפני תוכנית 1 " src="https://github.com/user-attachments/assets/248a52fd-55b7-4845-b8e2-a469e516397b" />
 
-אחרי תוכנית 1 
+אחרי תוכנית 1
 
 <img width="648" height="298" alt="אחרי תוכנית 1 " src="https://github.com/user-attachments/assets/8e0f5f7e-8867-4417-b72f-d272f08dbc30" />
-
 
 ⚙️ תוכנית ראשית 2: ניהול, איזון ותחזוקת מחלקה (System Maintenance Scenario)
 📝 הסבר מילולי
@@ -530,11 +533,253 @@ Commit: ביצוע עדכון קומה למחלקה ואישורו הסופי ב
 
 היא מפעילה את הפרוצדורה לסריקת מטופלים ותיקים (שוהים מעל 30 יום) ומסמנת אותם תחת עמודת הסטטוס החדשה review_status לטובת ביקורת מנהלתית, מבלי לפגוע בנתוני הסיכון הרפואי שלהם.
 
-לפני תוכנית 2 
+לפני תוכנית 2
 
 <img width="320" height="302" alt="לפני תוכנית 2" src="https://github.com/user-attachments/assets/9120bd4e-b925-4b28-bb52-85fccb36f94b" />
 
-
-אחרי תוכנית 2 
+אחרי תוכנית 2
 
 <img width="252" height="387" alt="אחרי תוכנית 2" src="https://github.com/user-attachments/assets/aa1d355d-4fb9-465e-876b-80b9de8aaa7b" />
+
+## 🌐 שלב 5: ממשק משתמש ווב – SmartCare HIS
+
+בשלב זה בנינו ממשק ניהול רפואי מלא המחובר ל-PostgreSQL בזמן אמת. המערכת כוללת 4 דפים, שרת Flask, ו-REST API המפעיל את כל פונקציות ה-PL/pgSQL שפותחו בשלבים הקודמים.
+
+---
+
+## 🏗️ ארכיטקטורת המערכת
+
+```
+Browser (RTL Hebrew UI)
+        │
+        ▼
+Flask Web Server (app.py)
+  ├── /                   → index.html     (לוח בקרה)
+  ├── /monitoring.html    → monitoring.html (ניטור קליני)
+  ├── /analytics.html     → analytics.html  (אנליטיקה)
+  ├── /management.html    → management.html (ניהול)
+  └── /api/*              → REST API endpoints
+        │
+        ▼
+PostgreSQL on Supabase (psycopg2)
+  ├── Tables: PATIENTS, ADMISSIONS, VITALS_LOGS, ...
+  ├── Functions: rebalance_and_audit_department, calculate_patient_risk
+  ├── Procedures: flag_long_term_patients, department_handoff_log
+  ├── Triggers: prevent_high_risk_discharge, validate_doctor_department
+  └── Views: hospital_coordination_view, ballistic_trauma_analysis, v_critical_alert_dashboard
+```
+
+---
+
+## 📂 מבנה הקבצים
+
+| קובץ              | תיאור                                         | עמוד                |
+| ----------------- | --------------------------------------------- | ------------------- |
+| `app.py`          | שרת Flask + REST API + חיבור לDB              | Backend             |
+| `index.html`      | לוח בקרה ראשי עם גרפים וסטטיסטיקות           | Dashboard           |
+| `monitoring.html` | ניטור קליני – חום, בדיקות, סיכון מטופלים     | Clinical Monitoring |
+| `analytics.html`  | אנליטיקה ודוחות – חדרים, תרופות, קרדיולוגיה  | Analytics & Reports |
+| `management.html` | ניהול – אשפוז, העברה, איזון עומסים           | Hospital Management |
+
+> כל דף הוא קובץ HTML עצמאי – CSS מוטבע (`<style>`) ללא תלות בקבצים חיצוניים.
+
+---
+
+## 🖥️ צילומי מסך
+
+### 📊 לוח בקרה ראשי (Dashboard)
+
+![לוח בקרה ראשי](שלב%205/תמונות/לוח%20בקרה%20ראשי%20.png)
+
+הדף מציג סטטיסטיקות בזמן אמת: מספר מטופלים פעילים, מדדים קריטיים, גרף עומס אשפוזים חודשי (Chart.js), גרף עומס רופאים, טבלת חולים עם סיכון לאשפוז חוזר, ובאנר התרעה קריטית מהמבט `v_critical_alert_dashboard`.
+
+---
+
+### 🩺 ניטור קליני (Clinical Monitoring)
+
+![ניטור קליני](שלב%205/תמונות/ניטור%20קליני%20.png)
+
+הדף כולל: ניטור חום גבוה (temp > 39.5) עם סינון מחלקה דינמי, טבלת תוצאות בדיקה חריגות (Abnormal), מחשבון סיכון מטופל (ממחיש `calculate_patient_risk`), ניהול מטופלים ממושכים (`flag_long_term_patients`), וחולים בסיכון לאשפוז חוזר.
+
+---
+
+### 📈 אנליטיקה ודוחות (Analytics & Reports)
+
+![אנליטקה ודוחות](שלב%205/תמונות/אנליטקה%20ודוחות%20.png)
+
+הדף כולל: מפת חדרים פנויים/תפוסים (NOT EXISTS), טבלת מעקב מרשמים לפי יצרן עם Dropdown סינון, טבלת וגרף ממוצע מדדי רופאי קרדיולוגיה, ותרשים עוגה של פופולריות תרופות לפי יצרן.
+
+---
+
+### 🏥 ניהול אשפוזים (Hospital Management)
+
+![ניהול אשפוזים](שלב%205/תמונות/ניהול%20אשפוזים%20.png)
+
+הדף כולל: טופס רישום אשפוז חדש עם ולידציית טריגרים בזמן אמת, טופס העברת מטופל בין מחלקות (`department_handoff_log`), כלי איזון עומסים אוטומטי (`rebalance_and_audit_department`) עם תצוגת לפני/אחרי, ויומן העברות חי.
+
+---
+
+## 🔌 REST API Endpoints
+
+| Method | Endpoint                              | תיאור                                       |
+| ------ | ------------------------------------- | ------------------------------------------- |
+| GET    | `/api/departments`                    | רשימת כל המחלקות מה-DB                     |
+| GET    | `/api/doctors?dept_id=X`              | רשימת רופאים (אופציונלי: לפי מחלקה)        |
+| GET    | `/api/patients`                       | רשימת מטופלים עם פרטי מחלקה               |
+| POST   | `/api/logic/rebalance-department`     | מפעיל `rebalance_and_audit_department()`   |
+| POST   | `/api/logic/flag-long-term`           | מפעיל `flag_long_term_patients()`          |
+| POST   | `/api/logic/transfer-patient`         | מפעיל `department_handoff_log()`           |
+
+---
+
+## 🗺️ מיפוי שאילתות SQL → פיצ'רים במערכת
+
+### שאילתה 1 – מטופלים עם חום גבוה (temp > 39.5)
+
+- **קובץ:** `monitoring.html`
+- **פיצ'ר:** טבלת "ניטור חום גבוה לפי מחלקה" עם סינון דינמי לפי מחלקה
+- **שאילתה:** `SELECT ... FROM PATIENTS JOIN ADMISSIONS JOIN VITALS_LOGS WHERE Temperature > 39.5`
+
+### שאילתה 2 – חדרים פנויים (NOT EXISTS)
+
+- **קובץ:** `analytics.html`
+- **פיצ'ר:** מפת חדרים ויזואלית (room tiles) – ירוק=פנוי, אדום=תפוס
+- **שאילתה:** `SELECT r.Room_Number ... WHERE NOT EXISTS (SELECT 1 FROM ADMISSIONS WHERE Room_ID = r.Room_ID)`
+
+### שאילתה 3 – רופאים שרשמו תרופות לפי יצרן
+
+- **קובץ:** `analytics.html`
+- **פיצ'ר:** טבלת "מעקב רישום תרופות לפי יצרן" עם Dropdown סינון יצרן
+- **שאילתה:** `SELECT d.Doctor_Name, m.Med_Name ... WHERE m.Manufacturer = 'GlobalPharma'`
+
+### שאילתה 4 – מטופלים עם תוצאת בדיקה חריגה (Abnormal)
+
+- **קובץ:** `monitoring.html`
+- **פיצ'ר:** טבלת "תוצאות בדיקות חריגות" עם כפתור הפניה לרופא
+- **שאילתה:** `SELECT ... JOIN TEST_RESULTS WHERE tr.Result_Value = 'Abnormal'`
+
+### שאילתה 5 – סטטיסטיקת אשפוזים חודשית (GROUP BY)
+
+- **קובץ:** `index.html`
+- **פיצ'ר:** גרף עמודות "עומס אשפוזים חודשי" + טבלת סיכום
+- **שאילתה:** `SELECT d.Dept_Name, EXTRACT(YEAR/MONTH), COUNT(...) GROUP BY d.Dept_Name, Floor, Year, Month`
+
+### שאילתה 6 – ממוצע מדדים קרדיולוגיה (HAVING + AVG)
+
+- **קובץ 1:** `index.html` – גרף "עומס רופאים"
+- **קובץ 2:** `analytics.html` – טבלת רופאי קרדיולוגיה + גרף השוואה
+- **שאילתה:** `SELECT d.Doctor_Name, AVG(Heart_Rate), AVG(Temperature) WHERE Specialization='Cardiology' HAVING AVG(Temperature) > 37.0`
+
+### שאילתה 7 – חולים חוזרים (HAVING COUNT >= 2)
+
+- **קובץ 1:** `index.html` – טבלת "חולים עם סיכון לאשפוז חוזר"
+- **קובץ 2:** `monitoring.html` – טבלת חולים חוזרים עם ספירת ביקורים
+- **שאילתה:** `SELECT ... COUNT(Admission_ID) HAVING COUNT(Admission_ID) >= 2`
+
+### שאילתה 8 – פופולריות תרופות (COUNT DISTINCT + HAVING > 20)
+
+- **קובץ:** `analytics.html`
+- **פיצ'ר 1:** טבלת "תרופות מובילות לפי כמות מרשמים"
+- **פיצ'ר 2:** גרף עוגה "נתח שוק לפי יצרן"
+- **שאילתה:** `SELECT m.Med_Name, COUNT(DISTINCT Doctor_ID), COUNT(...) HAVING COUNT(...) > 20`
+
+---
+
+## ⚙️ מיפוי פונקציות → פיצ'רים
+
+### פונקציה 1 – `calculate_patient_risk(p_admission_id)`
+
+- **קובץ:** `monitoring.html`
+- **פיצ'ר:** "מחשבון סיכון מטופל" – הזנת דופק וחום → חישוב Low / Medium / High
+- **אופן הפעולה:** אותו אלגוריתם IF-ELSIF מה-PL/pgSQL, מוצג עם מד ויזואלי
+- **רכיבי PL/pgSQL:** IF-ELSIF Branching, Score accumulation, RETURN level
+
+### פונקציה 2 – `rebalance_and_audit_department(p_dept_id, INOUT p_ref_cursor REFCURSOR)`
+
+- **קובץ:** `management.html`
+- **פיצ'ר:** "⚖️ חלוקה שווה של מטופלים בין רופאי המחלקה"
+- **אופן הפעולה:** בוחרים מחלקה → לחיצה מציגה לפני/אחרי, הפונקציה מחלקת מטופלים שווה בשיטת Round-Robin
+- **קריאת API:** `SELECT public.rebalance_and_audit_department(%s, 'rebal_cur')` + `FETCH ALL FROM rebal_cur`
+- **רכיבי PL/pgSQL:** CTE עם ROW_NUMBER, חלוקה במודולו, INOUT REFCURSOR
+
+---
+
+## 🔄 מיפוי פרוצדורות → פיצ'רים
+
+### פרוצדורה 1 – `flag_long_term_patients(p_min_days INT, INOUT p_cursor REFCURSOR)`
+
+- **קובץ:** `monitoring.html`
+- **פיצ'ר:** "אשפוזים ממושכים – Long Term Review" עם כפתור "עדכן רשימה"
+- **אופן הפעולה:** לחיצה → `CALL public.flag_long_term_patients(%s, 'lt_cur')` + `FETCH ALL` → רשימת מסומנים
+- **רכיבי PL/pgSQL:** Explicit Cursor FOR LOOP, UPDATE DML, INOUT REFCURSOR
+
+### פרוצדורה 2 – `department_handoff_log(p_patient_id, p_new_dept_id, p_staff_id, p_notes)`
+
+- **קובץ:** `management.html`
+- **פיצ'ר:** "🚚 טופס העברת מטופל" + יומן העברות
+- **אופן הפעולה:** הזנת ID מטופל + מחלקת יעד + הערות → רשומה ב-`department_transfers_log`
+- **רכיבי PL/pgSQL:** OPEN/FETCH/CLOSE REFCURSOR, UPDATE + INSERT DML, ROLLBACK on error
+
+---
+
+## 🛑 מיפוי טריגרים → פיצ'רים
+
+### טריגר 1 – `prevent_invalid_discharge_date`
+
+- **קובץ:** `management.html`
+- **פיצ'ר:** טופס "רישום אשפוז חדש" – ולידציה בזמן אמת
+- **אופן הפעולה:** תאריך שחרור מוקדם מתאריך קבלה → שגיאה אדומה לפני שמירה
+
+### טריגר 2 – `validate_doctor_department`
+
+- **קובץ:** `management.html`
+- **פיצ'ר:** טופס "רישום אשפוז חדש" – ולידציית רופא-מחלקה
+- **אופן הפעולה:** רופא שאינו שייך למחלקה שנבחרה → הודעת שגיאה מפורשת
+
+---
+
+## 👁️ מיפוי Views → פיצ'רים
+
+### View 1 – `hospital_coordination_view`
+
+- **קובץ:** `management.html`
+- **פיצ'ר:** טבלת "תצוגת תיאום – קשר עם שותפים" (מטופלים + סטטוס חירום + תאריך תיאום)
+
+### View 2 – `ballistic_trauma_analysis`
+
+- **קובץ:** `management.html`
+- **פיצ'ר:** טבלת "ניתוח טראומה – ציוד נדרש לטיפול"
+
+### View 3 – `v_critical_alert_dashboard`
+
+- **קובץ:** `index.html`
+- **פיצ'ר 1:** באנר התרעה – "X מטופלים במצב קריטי דורשים טיפול מיידי"
+- **פיצ'ר 2:** טבלת "חולים עם מדדים חריגים" עם עמודת איש קשר לוגיסטי
+
+---
+
+## 🛠️ טכנולוגיות
+
+- **Backend:** Python 3 + Flask, psycopg2 (PostgreSQL), Supabase Cloud
+- **Frontend:** HTML5, CSS3 (Variables, Grid, RTL), Vanilla JavaScript
+- **Charts:** Chart.js (עמודות, קווים, עוגה)
+- **עיצוב:** עברית RTL מלא, Responsive Design, CSS Variables
+
+---
+
+## ▶️ הוראות הרצה
+
+```bash
+# 1. כנס לתיקיית שלב 5
+cd "שלב 5"
+
+# 2. התקן תלויות (פעם אחת)
+pip install flask psycopg2-binary
+
+# 3. הרץ את השרת
+python app.py
+```
+
+השרת יעלה על `http://127.0.0.1:5000` – פתח כתובת זו בדפדפן.
+
+> **הערה:** יש צורך בחיבור אינטרנט לגישה לבסיס הנתונים ב-Supabase.
