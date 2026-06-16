@@ -1,487 +1,1211 @@
 <!doctype html>
 <html lang="he" dir="rtl">
-<head>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>SmartCare HIS – ניהול</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"/>
-<style>
-:root{--sb-bg:#0b2240;--sb-w:252px;--cyan:#00b4d8;--cyan-dim:rgba(0,180,216,.14);--blue:#1565c0;--blue-dk:#0d47a1;--red:#c62828;--red-bg:#ffebee;--green:#2e7d32;--green-bg:#e8f5e9;--amber:#e65100;--amber-bg:#fff8e1;--purple:#4527a0;--purple-bg:#ede7f6;--page-bg:#edf1f7;--card:#ffffff;--border:#e2e8f0;--border-light:#f1f5f9;--t1:#1a202c;--t2:#4a5568;--t3:#718096;--t4:#a0aec0;--shadow-sm:0 1px 3px rgba(0,0,0,.07),0 1px 2px rgba(0,0,0,.05);--shadow-md:0 4px 12px rgba(0,0,0,.08);--radius:12px}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;font-family:'Inter',system-ui,sans-serif;background:var(--page-bg);color:var(--t1);direction:rtl}
-a{text-decoration:none;color:inherit}
-.app{display:flex;height:100vh;overflow:hidden}
-.sidebar{width:var(--sb-w);background:var(--sb-bg);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden}
-.sidebar::-webkit-scrollbar{width:0}
-.sb-logo{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,.07)}
-.sb-logo-name{font-size:21px;font-weight:900;color:#fff;letter-spacing:-.5px;line-height:1}
-.sb-logo-name em{color:var(--cyan);font-style:normal}
-.sb-logo-sub{font-size:10px;color:rgba(255,255,255,.35);font-weight:600;text-transform:uppercase;letter-spacing:1.5px;margin-top:5px}
-.sb-section{padding:18px 14px 4px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.4px;color:rgba(255,255,255,.25)}
-.sb-link{display:flex;align-items:center;gap:10px;padding:10px 14px;margin:1px 8px;border-radius:8px;color:rgba(255,255,255,.55);font-size:13px;font-weight:500;transition:background .15s,color .15s;cursor:pointer;border-right:3px solid transparent}
-.sb-link:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.9)}
-.sb-link.active{background:var(--cyan-dim);color:#fff;font-weight:700;border-right-color:var(--cyan)}
-.sb-link .ico{font-size:16px;width:20px;text-align:center;flex-shrink:0}
-.sb-footer{margin-top:auto;padding:14px 14px 18px;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
-.sb-avatar{width:34px;height:34px;border-radius:9px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:#fff;flex-shrink:0}
-.sb-user-name{font-size:12px;font-weight:700;color:#fff}
-.sb-user-role{font-size:10px;color:var(--cyan);font-weight:600;text-transform:uppercase}
-.main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.topbar{background:var(--card);border-bottom:1px solid var(--border);height:58px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.tb-title{font-size:17px;font-weight:800;color:var(--t1)}
-.tb-sub{font-size:11px;color:var(--t4);margin-top:2px}
-.tb-right{display:flex;align-items:center;gap:14px}
-.live-pill{display:flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
-.live-dot{width:7px;height:7px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-.tb-date{font-size:11.5px;color:var(--t3);font-weight:500}
-.scroll-area{flex:1;overflow-y:auto;padding:26px 28px}
-.scroll-area::-webkit-scrollbar{width:5px}
-.scroll-area::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}
-.sec-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.3px;color:var(--t4);display:flex;align-items:center;gap:10px;margin:22px 0 12px}
-.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.mb22{margin-bottom:22px}
-.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow-sm);overflow:hidden;transition:box-shadow .2s}
-.card:hover{box-shadow:var(--shadow-md)}
-.card-hd{padding:14px 18px 13px;border-bottom:1px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;gap:10px}
-.card-title{font-size:13.5px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:7px}
-.card-body{padding:18px}
-.tbl{width:100%;border-collapse:collapse}
-.tbl thead th{background:#f8fafc;padding:10px 16px;font-size:10.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
-.tbl tbody td{padding:11px 16px;font-size:13px;color:var(--t2);border-bottom:1px solid var(--border-light);vertical-align:middle}
-.tbl tbody tr:last-child td{border-bottom:none}
-.tbl tbody tr{transition:background .1s}
-.tbl tbody tr:hover td{background:#f8fafc}
-.tbl td b{color:var(--t1)}
-.badge{display:inline-flex;align-items:center;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:20px;white-space:nowrap;letter-spacing:.2px}
-.b-crit{background:#b71c1c;color:#fff}.b-high{background:var(--red-bg);color:var(--red)}.b-warn{background:var(--amber-bg);color:var(--amber)}.b-stable{background:var(--green-bg);color:var(--green)}
-.tag-red{background:var(--red-bg);color:var(--red);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px}
-.tag-amber{background:var(--amber-bg);color:var(--amber);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px}
-.tag-cyan{background:rgba(0,180,216,.1);color:#006064;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px}
-.tag-purple{background:var(--purple-bg);color:var(--purple);font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px}
-.f-row{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap}
-.f-col{display:flex;flex-direction:column;gap:5px}
-.f-label{font-size:10.5px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.5px}
-.f-input,.f-select{border:1.5px solid var(--border);border-radius:8px;padding:8px 11px;font-size:13px;font-family:inherit;background:#fff;color:var(--t1);outline:none;transition:border-color .15s,box-shadow .15s;min-width:130px}
-.f-input:focus,.f-select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,101,192,.1)}
-.w100{width:100%}
-.btn{padding:8px 16px;border-radius:8px;border:none;cursor:pointer;font-size:12.5px;font-weight:700;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
-.btn:active{transform:scale(.97)}
-.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:var(--blue-dk)}
-.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#1b5e20}
-.btn-amber{background:var(--amber);color:#fff}.btn-amber:hover{background:#bf360c}
-.btn-ghost{background:#f1f5f9;color:var(--t2)}.btn-ghost:hover{background:#e2e8f0}
-.btn-sm{padding:5px 12px;font-size:12px}
-.rbox{border-radius:9px;padding:11px 14px;font-size:12.5px;font-weight:500;line-height:1.5;display:none;margin-top:14px}
-.rbox.show{display:block}
-.rbox.ok{background:var(--green-bg);border:1px solid #a5d6a7;color:#1b5e20}
-.rbox.err{background:var(--red-bg);border:1px solid #ef9a9a;color:var(--red)}
-.rbox.info{background:#e3f2fd;border:1px solid #90caf9;color:var(--blue)}
-.tlog-item{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-bottom:1px solid var(--border-light)}
-.tlog-item:last-child{border-bottom:none}
-.tlog-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:5px;background:var(--t4)}
-.tlog-txt{font-size:13px;color:var(--t2)}
-.tlog-sub{font-size:11px;color:var(--t4);margin-top:2px;line-height:1.4}
-@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.fade-up{animation:fadeUp .3s ease}
-</style>
-</head>
-<body>
-<div class="app">
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="sb-logo">
-      <div class="sb-logo-name">SmartCare<em>+</em></div>
-      <div class="sb-logo-sub">מרכז רפואי שיבא · 2026</div>
-    </div>
-    <div class="sb-section">ניהול קליני</div>
-    <a class="sb-link" href="index.html"><span class="ico">📊</span> לוח בקרה</a>
-    <a class="sb-link" href="monitoring.html"><span class="ico">🚨</span> ניטור קליני</a>
-    <a class="sb-link active" href="management.html"><span class="ico">⚙️</span> ניהול אשפוזים</a>
-    <div class="sb-section">אנליזה ודיווח</div>
-    <a class="sb-link" href="analytics.html"><span class="ico">📈</span> אנליטיקה ודוחות</a>
-    <div class="sb-footer">
-      <div class="sb-avatar">NA</div>
-      <div>
-        <div class="sb-user-name">נחמן אוקשי</div>
-        <div class="sb-user-role">DB Administrator</div>
-      </div>
-    </div>
-  </aside>
-
-  <div class="main">
-    <div class="topbar">
-      <div>
-        <div class="tb-title">ניהול אשפוזים ומחלקות</div>
-        <div class="tb-sub">קבלה לאשפוז, העברות מטופלים, ואיזון עומסי מחלקות</div>
-      </div>
-      <div class="tb-right">
-        <div class="live-pill"><div class="live-dot"></div>מחובר</div>
-        <div class="tb-date" id="tb-date"></div>
-      </div>
-    </div>
-
-    <div class="scroll-area fade-up">
-
-      <!-- admission form -->
-      <div class="sec-label">קבלת מטופל חדש לאשפוז</div>
-      <div class="card mb22">
-        <div class="card-hd">
-          <div class="card-title">🏥 טופס רישום אשפוז</div>
-          <span class="tag-red">Triggers: date-validate · doctor-dept-validate</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title>SmartCare HIS – ניהול</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+    />
+    <style>
+      :root {
+        --sb-bg: #0b2240;
+        --sb-w: 252px;
+        --cyan: #00b4d8;
+        --cyan-dim: rgba(0, 180, 216, 0.14);
+        --blue: #1565c0;
+        --blue-dk: #0d47a1;
+        --red: #c62828;
+        --red-bg: #ffebee;
+        --green: #2e7d32;
+        --green-bg: #e8f5e9;
+        --amber: #e65100;
+        --amber-bg: #fff8e1;
+        --purple: #4527a0;
+        --purple-bg: #ede7f6;
+        --page-bg: #edf1f7;
+        --card: #ffffff;
+        --border: #e2e8f0;
+        --border-light: #f1f5f9;
+        --t1: #1a202c;
+        --t2: #4a5568;
+        --t3: #718096;
+        --t4: #a0aec0;
+        --shadow-sm:
+          0 1px 3px rgba(0, 0, 0, 0.07), 0 1px 2px rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+        --radius: 12px;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+        font-family: "Inter", system-ui, sans-serif;
+        background: var(--page-bg);
+        color: var(--t1);
+        direction: rtl;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+      .app {
+        display: flex;
+        height: 100vh;
+        overflow: hidden;
+      }
+      .sidebar {
+        width: var(--sb-w);
+        background: var(--sb-bg);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+      }
+      .sidebar::-webkit-scrollbar {
+        width: 0;
+      }
+      .sb-logo {
+        padding: 24px 20px 20px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      }
+      .sb-logo-name {
+        font-size: 21px;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: -0.5px;
+        line-height: 1;
+      }
+      .sb-logo-name em {
+        color: var(--cyan);
+        font-style: normal;
+      }
+      .sb-logo-sub {
+        font-size: 10px;
+        color: rgba(255, 255, 255, 0.35);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-top: 5px;
+      }
+      .sb-section {
+        padding: 18px 14px 4px;
+        font-size: 9.5px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.4px;
+        color: rgba(255, 255, 255, 0.25);
+      }
+      .sb-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 14px;
+        margin: 1px 8px;
+        border-radius: 8px;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 13px;
+        font-weight: 500;
+        transition:
+          background 0.15s,
+          color 0.15s;
+        cursor: pointer;
+        border-right: 3px solid transparent;
+      }
+      .sb-link:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: rgba(255, 255, 255, 0.9);
+      }
+      .sb-link.active {
+        background: var(--cyan-dim);
+        color: #fff;
+        font-weight: 700;
+        border-right-color: var(--cyan);
+      }
+      .sb-link .ico {
+        font-size: 16px;
+        width: 20px;
+        text-align: center;
+        flex-shrink: 0;
+      }
+      .sb-footer {
+        margin-top: auto;
+        padding: 14px 14px 18px;
+        border-top: 1px solid rgba(255, 255, 255, 0.07);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .sb-avatar {
+        width: 34px;
+        height: 34px;
+        border-radius: 9px;
+        background: var(--blue);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: 800;
+        color: #fff;
+        flex-shrink: 0;
+      }
+      .sb-user-name {
+        font-size: 12px;
+        font-weight: 700;
+        color: #fff;
+      }
+      .sb-user-role {
+        font-size: 10px;
+        color: var(--cyan);
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .topbar {
+        background: var(--card);
+        border-bottom: 1px solid var(--border);
+        height: 58px;
+        padding: 0 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .tb-title {
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--t1);
+      }
+      .tb-sub {
+        font-size: 11px;
+        color: var(--t4);
+        margin-top: 2px;
+      }
+      .tb-right {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .live-pill {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        background: var(--green-bg);
+        color: var(--green);
+        font-size: 11px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+      }
+      .live-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--green);
+        animation: pulse 1.5s infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.35;
+        }
+      }
+      .tb-date {
+        font-size: 11.5px;
+        color: var(--t3);
+        font-weight: 500;
+      }
+      .scroll-area {
+        flex: 1;
+        overflow-y: auto;
+        padding: 26px 28px;
+      }
+      .scroll-area::-webkit-scrollbar {
+        width: 5px;
+      }
+      .scroll-area::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      .sec-label {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.3px;
+        color: var(--t4);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 22px 0 12px;
+      }
+      .sec-label::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--border);
+      }
+      .g2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+      }
+      .mb22 {
+        margin-bottom: 22px;
+      }
+      .card {
+        background: var(--card);
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow-sm);
+        overflow: hidden;
+        transition: box-shadow 0.2s;
+      }
+      .card:hover {
+        box-shadow: var(--shadow-md);
+      }
+      .card-hd {
+        padding: 14px 18px 13px;
+        border-bottom: 1px solid var(--border-light);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .card-title {
+        font-size: 13.5px;
+        font-weight: 700;
+        color: var(--t1);
+        display: flex;
+        align-items: center;
+        gap: 7px;
+      }
+      .card-body {
+        padding: 18px;
+      }
+      .tbl {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      .tbl thead th {
+        background: #f8fafc;
+        padding: 10px 16px;
+        font-size: 10.5px;
+        font-weight: 700;
+        color: var(--t3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 1px solid var(--border);
+        text-align: right;
+        white-space: nowrap;
+      }
+      .tbl tbody td {
+        padding: 11px 16px;
+        font-size: 13px;
+        color: var(--t2);
+        border-bottom: 1px solid var(--border-light);
+        vertical-align: middle;
+      }
+      .tbl tbody tr:last-child td {
+        border-bottom: none;
+      }
+      .tbl tbody tr {
+        transition: background 0.1s;
+      }
+      .tbl tbody tr:hover td {
+        background: #f8fafc;
+      }
+      .tbl td b {
+        color: var(--t1);
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 3px 9px;
+        border-radius: 20px;
+        white-space: nowrap;
+        letter-spacing: 0.2px;
+      }
+      .b-crit {
+        background: #b71c1c;
+        color: #fff;
+      }
+      .b-high {
+        background: var(--red-bg);
+        color: var(--red);
+      }
+      .b-warn {
+        background: var(--amber-bg);
+        color: var(--amber);
+      }
+      .b-stable {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+      .tag-red {
+        background: var(--red-bg);
+        color: var(--red);
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+      .tag-amber {
+        background: var(--amber-bg);
+        color: var(--amber);
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+      .tag-cyan {
+        background: rgba(0, 180, 216, 0.1);
+        color: #006064;
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+      .tag-purple {
+        background: var(--purple-bg);
+        color: var(--purple);
+        font-size: 10.5px;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 20px;
+      }
+      .f-row {
+        display: flex;
+        gap: 12px;
+        align-items: flex-end;
+        flex-wrap: wrap;
+      }
+      .f-col {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .f-label {
+        font-size: 10.5px;
+        font-weight: 700;
+        color: var(--t3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .f-input,
+      .f-select {
+        border: 1.5px solid var(--border);
+        border-radius: 8px;
+        padding: 8px 11px;
+        font-size: 13px;
+        font-family: inherit;
+        background: #fff;
+        color: var(--t1);
+        outline: none;
+        transition:
+          border-color 0.15s,
+          box-shadow 0.15s;
+        min-width: 130px;
+      }
+      .f-input:focus,
+      .f-select:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(21, 101, 192, 0.1);
+      }
+      .w100 {
+        width: 100%;
+      }
+      .btn {
+        padding: 8px 16px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        font-size: 12.5px;
+        font-weight: 700;
+        font-family: inherit;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.15s;
+        white-space: nowrap;
+      }
+      .btn:active {
+        transform: scale(0.97);
+      }
+      .btn-blue {
+        background: var(--blue);
+        color: #fff;
+      }
+      .btn-blue:hover {
+        background: var(--blue-dk);
+      }
+      .btn-green {
+        background: var(--green);
+        color: #fff;
+      }
+      .btn-green:hover {
+        background: #1b5e20;
+      }
+      .btn-amber {
+        background: var(--amber);
+        color: #fff;
+      }
+      .btn-amber:hover {
+        background: #bf360c;
+      }
+      .btn-ghost {
+        background: #f1f5f9;
+        color: var(--t2);
+      }
+      .btn-ghost:hover {
+        background: #e2e8f0;
+      }
+      .btn-sm {
+        padding: 5px 12px;
+        font-size: 12px;
+      }
+      .rbox {
+        border-radius: 9px;
+        padding: 11px 14px;
+        font-size: 12.5px;
+        font-weight: 500;
+        line-height: 1.5;
+        display: none;
+        margin-top: 14px;
+      }
+      .rbox.show {
+        display: block;
+      }
+      .rbox.ok {
+        background: var(--green-bg);
+        border: 1px solid #a5d6a7;
+        color: #1b5e20;
+      }
+      .rbox.err {
+        background: var(--red-bg);
+        border: 1px solid #ef9a9a;
+        color: var(--red);
+      }
+      .rbox.info {
+        background: #e3f2fd;
+        border: 1px solid #90caf9;
+        color: var(--blue);
+      }
+      .tlog-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        padding: 11px 0;
+        border-bottom: 1px solid var(--border-light);
+      }
+      .tlog-item:last-child {
+        border-bottom: none;
+      }
+      .tlog-dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        margin-top: 5px;
+        background: var(--t4);
+      }
+      .tlog-txt {
+        font-size: 13px;
+        color: var(--t2);
+      }
+      .tlog-sub {
+        font-size: 11px;
+        color: var(--t4);
+        margin-top: 2px;
+        line-height: 1.4;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-up {
+        animation: fadeUp 0.3s ease;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sb-logo">
+          <div class="sb-logo-name">SmartCare<em>+</em></div>
+          <div class="sb-logo-sub">מרכז רפואי שיבא · 2026</div>
         </div>
-        <div class="card-body">
-          <div class="f-row" style="flex-wrap:wrap;gap:14px;margin-bottom:14px">
-            <div class="f-col">
-              <label class="f-label">מזהה מטופל</label>
-              <input type="number" id="a-pid" class="f-input" value="201" style="width:120px"/>
-            </div>
-            <div class="f-col">
-              <label class="f-label">מחלקה</label>
-              <select id="a-dept" class="f-select" onchange="loadDoctorsForAdm()">
-                <option value="">טוען...</option>
-              </select>
-            </div>
-            <div class="f-col">
-              <label class="f-label">רופא אחראי</label>
-              <select id="a-doc" class="f-select">
-                <option value="">בחר מחלקה תחילה</option>
-              </select>
-            </div>
-            <div class="f-col">
-              <label class="f-label">תאריך קבלה</label>
-              <input type="date" id="a-in" class="f-input"/>
-            </div>
-            <div class="f-col">
-              <label class="f-label">תאריך שחרור (אם ידוע)</label>
-              <input type="date" id="a-out" class="f-input"/>
-            </div>
-            <div class="f-col">
-              <label class="f-label">רמת סיכון</label>
-              <select id="a-risk" class="f-select">
-                <option>Low</option><option>Medium</option><option>High</option>
-              </select>
-            </div>
+        <div class="sb-section">ניהול קליני</div>
+        <a class="sb-link" href="index.html"
+          ><span class="ico">📊</span> לוח בקרה</a
+        >
+        <a class="sb-link" href="monitoring.html"
+          ><span class="ico">🚨</span> ניטור קליני</a
+        >
+        <a class="sb-link active" href="management.html"
+          ><span class="ico">⚙️</span> ניהול אשפוזים</a
+        >
+        <div class="sb-section">אנליזה ודיווח</div>
+        <a class="sb-link" href="analytics.html"
+          ><span class="ico">📈</span> אנליטיקה ודוחות</a
+        >
+        <div class="sb-footer">
+          <div class="sb-avatar">NA</div>
+          <div>
+            <div class="sb-user-name">נחמן אוקשי</div>
+            <div class="sb-user-role">DB Administrator</div>
           </div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-green" onclick="submitAdm()">✓ אשר קבלה לאשפוז</button>
-            <button class="btn btn-ghost" onclick="clearAdm()">✕ נקה</button>
-          </div>
-          <div class="rbox" id="adm-r"></div>
         </div>
-      </div>
+      </aside>
 
-      <!-- transfer -->
-      <div class="sec-label">העברת מטופל בין מחלקות</div>
-      <div class="g2 mb22">
-        <div class="card">
-          <div class="card-hd">
-            <div class="card-title">🚚 טופס העברה</div>
-            <span class="tag-amber">department_handoff_log()</span>
+      <div class="main">
+        <div class="topbar">
+          <div>
+            <div class="tb-title">ניהול אשפוזים ומחלקות</div>
+            <div class="tb-sub">
+              קבלה לאשפוז, העברות מטופלים, ואיזון עומסי מחלקות
+            </div>
           </div>
-          <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
-            <div class="f-col w100">
-              <label class="f-label">מזהה מטופל (Patient ID)</label>
-              <input type="number" id="t-pid" class="f-input w100" placeholder="הכנס מספר מטופל..."/>
+          <div class="tb-right">
+            <div class="live-pill">
+              <div class="live-dot"></div>
+              מחובר
             </div>
-            <div class="f-col w100">
-              <label class="f-label">מחלקה יעד</label>
-              <select id="t-dept" class="f-select w100">
-                <option value="">טוען מחלקות...</option>
-              </select>
-            </div>
-            <div class="f-col w100">
-              <label class="f-label">שם הרופא המוביל</label>
-              <input type="text" id="t-staff" class="f-input w100" placeholder="שם הרופא האחראי להעברה..."/>
-            </div>
-            <div class="f-col w100">
-              <label class="f-label">הערות</label>
-              <input type="text" id="t-notes" class="f-input w100" placeholder="סיבת ההעברה..."/>
-            </div>
-            <button class="btn btn-blue w100" style="justify-content:center" onclick="doTransfer()">▶ בצע העברה ורשום ביומן</button>
-            <div class="rbox" id="tr-r"></div>
+            <div class="tb-date" id="tb-date"></div>
           </div>
         </div>
-        <div class="card">
-          <div class="card-hd"><div class="card-title">📜 יומן העברות</div></div>
-          <div class="card-body" id="tlog">
-            <div class="tlog-item">
-              <div class="tlog-dot" style="background:var(--blue)"></div>
-              <div>
-                <div class="tlog-txt"><b>חיים גולדברג</b> → Cardiology ← ICU</div>
-                <div class="tlog-sub">לפני 2 שעות · ד"ר עמי גל · "מצב קריטי – דרוש ניטור רציף"</div>
-              </div>
-            </div>
-            <div class="tlog-item">
-              <div class="tlog-dot" style="background:var(--green)"></div>
-              <div>
-                <div class="tlog-txt"><b>נעמי שפירא</b> → Neurology ← Surgery</div>
-                <div class="tlog-sub">לפני 5 שעות · סא"ל רמי ברוש · "ניתוח דחוף"</div>
-              </div>
-            </div>
-            <div class="tlog-item">
-              <div class="tlog-dot"></div>
-              <div>
-                <div class="tlog-txt"><b>יצחק בן-דוד</b> → Surgery ← Cardiology</div>
-                <div class="tlog-sub">אתמול 18:30 · רס"ן דנה מזרחי · "בעיית לב שנתגלתה"</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
-      <!-- rebalance -->
-      <div class="sec-label">איזון אוטומטי – עומס רופאים במחלקה</div>
-      <div class="card mb22">
-        <div class="card-hd">
-          <div class="card-title">⚖️ חלוקה שווה של מטופלים בין רופאי המחלקה</div>
-          <span class="tag-purple">rebalance_and_audit_department()</span>
-        </div>
-        <div class="card-body">
-          <div class="f-row" style="margin-bottom:16px">
-            <div class="f-col">
-              <label class="f-label">מחלקה לאיזון</label>
-              <select id="rb-dept" class="f-select">
-                <option value="">טוען מחלקות...</option>
-              </select>
+        <div class="scroll-area fade-up">
+          <!-- admission form -->
+          <div class="sec-label">קבלת מטופל חדש לאשפוז</div>
+          <div class="card mb22">
+            <div class="card-hd">
+              <div class="card-title">🏥 טופס שחרור אשפוז</div>
+              <span class="tag-red"
+                >Triggers: date-validate · doctor-dept-validate</span
+              >
             </div>
-            <div class="f-col" style="justify-content:flex-end">
-              <button class="btn btn-amber" onclick="doRebal()">⚖️ הפעל איזון אוטומטי</button>
-            </div>
-          </div>
-          <div id="rebal-cmp" style="display:none">
-            <div class="g2" style="gap:14px">
-              <div>
-                <div style="font-size:11px;font-weight:700;color:var(--t4);text-transform:uppercase;margin-bottom:8px;letter-spacing:.8px">לפני האיזון</div>
-                <div style="border:1.5px solid var(--border);border-radius:10px;overflow:hidden">
-                  <table class="tbl"><thead><tr><th>רופא</th><th>מטופלים</th></tr></thead><tbody id="bef-body"></tbody></table>
+            <div class="card-body">
+              <div
+                class="f-row"
+                style="flex-wrap: wrap; gap: 14px; margin-bottom: 14px"
+              >
+                <div class="f-col">
+                  <label class="f-label">מזהה מטופל</label>
+                  <input
+                    type="number"
+                    id="a-pid"
+                    class="f-input"
+                    value="201"
+                    style="width: 120px"
+                  />
+                </div>
+                <div class="f-col">
+                  <label class="f-label">מחלקה</label>
+                  <select
+                    id="a-dept"
+                    class="f-select"
+                    onchange="loadDoctorsForAdm()"
+                  >
+                    <option value="">טוען...</option>
+                  </select>
+                </div>
+                <div class="f-col">
+                  <label class="f-label">רופא אחראי</label>
+                  <select id="a-doc" class="f-select">
+                    <option value="">בחר מחלקה תחילה</option>
+                  </select>
+                </div>
+                <div class="f-col">
+                  <label class="f-label">תאריך קבלה</label>
+                  <input type="date" id="a-in" class="f-input" />
+                </div>
+                <div class="f-col">
+                  <label class="f-label">תאריך שחרור </label>
+                  <input type="date" id="a-out" class="f-input" />
+                </div>
+                <div class="f-col">
+                  <label class="f-label">רמת סיכון</label>
+                  <select id="a-risk" class="f-select">
+                    <option>Low</option>
+                    <option>Medium</option>
+                    <option>High</option>
+                  </select>
                 </div>
               </div>
-              <div>
-                <div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;margin-bottom:8px;letter-spacing:.8px">אחרי האיזון ✓</div>
-                <div style="border:1.5px solid #81c784;border-radius:10px;overflow:hidden">
-                  <table class="tbl"><thead><tr><th>רופא</th><th>מטופלים</th></tr></thead><tbody id="aft-body"></tbody></table>
+              <div style="display: flex; gap: 8px">
+                <button class="btn btn-green" onclick="submitAdm()">
+                  ✓ אשר שחרור מאשפוז
+                </button>
+                <button class="btn btn-ghost" onclick="clearAdm()">
+                  ✕ נקה
+                </button>
+              </div>
+              <div class="rbox" id="adm-r"></div>
+            </div>
+          </div>
+
+          <!-- transfer -->
+          <div class="sec-label">העברת מטופל בין מחלקות</div>
+          <div class="g2 mb22">
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-title">🚚 טופס העברה</div>
+                <span class="tag-amber">department_handoff_log()</span>
+              </div>
+              <div
+                class="card-body"
+                style="display: flex; flex-direction: column; gap: 12px"
+              >
+                <div class="f-col w100">
+                  <label class="f-label">מזהה מטופל (Patient ID)</label>
+                  <input
+                    type="number"
+                    id="t-pid"
+                    class="f-input w100"
+                    placeholder="הכנס מספר מטופל..."
+                  />
+                </div>
+                <div class="f-col w100">
+                  <label class="f-label">מחלקה יעד</label>
+                  <select id="t-dept" class="f-select w100">
+                    <option value="">טוען מחלקות...</option>
+                  </select>
+                </div>
+                <div class="f-col w100">
+                  <label class="f-label">שם הרופא המוביל</label>
+                  <input
+                    type="text"
+                    id="t-staff"
+                    class="f-input w100"
+                    placeholder="שם הרופא האחראי להעברה..."
+                  />
+                </div>
+                <div class="f-col w100">
+                  <label class="f-label">הערות</label>
+                  <input
+                    type="text"
+                    id="t-notes"
+                    class="f-input w100"
+                    placeholder="סיבת ההעברה..."
+                  />
+                </div>
+                <button
+                  class="btn btn-blue w100"
+                  style="justify-content: center"
+                  onclick="doTransfer()"
+                >
+                  ▶ בצע העברה ורשום ביומן
+                </button>
+                <div class="rbox" id="tr-r"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-title">📜 יומן העברות</div>
+              </div>
+              <div class="card-body" id="tlog">
+                <div class="tlog-item">
+                  <div class="tlog-dot" style="background: var(--blue)"></div>
+                  <div>
+                    <div class="tlog-txt">
+                      <b>חיים גולדברג</b> → Cardiology ← ICU
+                    </div>
+                    <div class="tlog-sub">
+                      לפני 2 שעות · ד"ר עמי גל · "מצב קריטי – דרוש ניטור רציף"
+                    </div>
+                  </div>
+                </div>
+                <div class="tlog-item">
+                  <div class="tlog-dot" style="background: var(--green)"></div>
+                  <div>
+                    <div class="tlog-txt">
+                      <b>נעמי שפירא</b> → Neurology ← Surgery
+                    </div>
+                    <div class="tlog-sub">
+                      לפני 5 שעות · סא"ל רמי ברוש · "ניתוח דחוף"
+                    </div>
+                  </div>
+                </div>
+                <div class="tlog-item">
+                  <div class="tlog-dot"></div>
+                  <div>
+                    <div class="tlog-txt">
+                      <b>יצחק בן-דוד</b> → Surgery ← Cardiology
+                    </div>
+                    <div class="tlog-sub">
+                      אתמול 18:30 · רס"ן דנה מזרחי · "בעיית לב שנתגלתה"
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="rbox" id="rb-r"></div>
+
+          <!-- rebalance -->
+          <div class="sec-label">איזון אוטומטי – עומס רופאים במחלקה</div>
+          <div class="card mb22">
+            <div class="card-hd">
+              <div class="card-title">
+                ⚖️ חלוקה שווה של מטופלים בין רופאי המחלקה
+              </div>
+              <span class="tag-purple">rebalance_and_audit_department()</span>
+            </div>
+            <div class="card-body">
+              <div class="f-row" style="margin-bottom: 16px">
+                <div class="f-col">
+                  <label class="f-label">מחלקה לאיזון</label>
+                  <select id="rb-dept" class="f-select">
+                    <option value="">טוען מחלקות...</option>
+                  </select>
+                </div>
+                <div class="f-col" style="justify-content: flex-end">
+                  <button class="btn btn-amber" onclick="doRebal()">
+                    ⚖️ הפעל איזון אוטומטי
+                  </button>
+                </div>
+              </div>
+              <div id="rebal-cmp" style="display: none">
+                <div class="g2" style="gap: 14px">
+                  <div>
+                    <div
+                      style="
+                        font-size: 11px;
+                        font-weight: 700;
+                        color: var(--t4);
+                        text-transform: uppercase;
+                        margin-bottom: 8px;
+                        letter-spacing: 0.8px;
+                      "
+                    >
+                      לפני האיזון
+                    </div>
+                    <div
+                      style="
+                        border: 1.5px solid var(--border);
+                        border-radius: 10px;
+                        overflow: hidden;
+                      "
+                    >
+                      <table class="tbl">
+                        <thead>
+                          <tr>
+                            <th>רופא</th>
+                            <th>מטופלים</th>
+                          </tr>
+                        </thead>
+                        <tbody id="bef-body"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                  <div>
+                    <div
+                      style="
+                        font-size: 11px;
+                        font-weight: 700;
+                        color: var(--green);
+                        text-transform: uppercase;
+                        margin-bottom: 8px;
+                        letter-spacing: 0.8px;
+                      "
+                    >
+                      אחרי האיזון ✓
+                    </div>
+                    <div
+                      style="
+                        border: 1.5px solid #81c784;
+                        border-radius: 10px;
+                        overflow: hidden;
+                      "
+                    >
+                      <table class="tbl">
+                        <thead>
+                          <tr>
+                            <th>רופא</th>
+                            <th>מטופלים</th>
+                          </tr>
+                        </thead>
+                        <tbody id="aft-body"></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="rbox" id="rb-r"></div>
+            </div>
+          </div>
+
+          <!-- coordination views -->
+          <div class="sec-label">תצוגות תיאום ואינטגרציה</div>
+          <div class="g2">
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-title">🤝 תיאום לוגיסטי – שותפים</div>
+                <span class="tag-cyan">hospital_coordination_view</span>
+              </div>
+              <table class="tbl">
+                <thead>
+                  <tr>
+                    <th>מטופל</th>
+                    <th>תאריך קבלה</th>
+                    <th>סטטוס חירום</th>
+                    <th>תאריך תיאום</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><b>יוסף לוי</b></td>
+                    <td>12/06/2026</td>
+                    <td><span class="badge b-crit">Active</span></td>
+                    <td>13/06/2026</td>
+                  </tr>
+                  <tr>
+                    <td><b>רחל אביגד</b></td>
+                    <td>10/06/2026</td>
+                    <td><span class="badge b-high">Active</span></td>
+                    <td>12/06/2026</td>
+                  </tr>
+                  <tr>
+                    <td><b>שלמה ברנר</b></td>
+                    <td>08/06/2026</td>
+                    <td><span class="badge b-warn">Pending</span></td>
+                    <td>11/06/2026</td>
+                  </tr>
+                  <tr>
+                    <td><b>מרים עזרא</b></td>
+                    <td>02/05/2026</td>
+                    <td><span class="badge b-stable">Resolved</span></td>
+                    <td>05/05/2026</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="card-hd">
+                <div class="card-title">🎯 ניתוח טראומה – ציוד נדרש</div>
+                <span class="tag-cyan">ballistic_trauma_analysis</span>
+              </div>
+              <table class="tbl">
+                <thead>
+                  <tr>
+                    <th>מטופל</th>
+                    <th>תאריך</th>
+                    <th>סוג פגיעה</th>
+                    <th>סטטוס</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><b>יוסף לוי</b></td>
+                    <td>12/06/2026</td>
+                    <td>Heavy Ordnance</td>
+                    <td><span class="badge b-crit">Critical</span></td>
+                  </tr>
+                  <tr>
+                    <td><b>שלמה ברנר</b></td>
+                    <td>08/06/2026</td>
+                    <td>Light Shrapnel</td>
+                    <td><span class="badge b-high">Active</span></td>
+                  </tr>
+                  <tr>
+                    <td><b>נחמן כץ</b></td>
+                    <td>05/06/2026</td>
+                    <td>Blast Injury</td>
+                    <td><span class="badge b-warn">Stable</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
-
-      <!-- coordination views -->
-      <div class="sec-label">תצוגות תיאום ואינטגרציה</div>
-      <div class="g2">
-        <div class="card">
-          <div class="card-hd">
-            <div class="card-title">🤝 תיאום לוגיסטי – שותפים</div>
-            <span class="tag-cyan">hospital_coordination_view</span>
-          </div>
-          <table class="tbl">
-            <thead><tr><th>מטופל</th><th>תאריך קבלה</th><th>סטטוס חירום</th><th>תאריך תיאום</th></tr></thead>
-            <tbody>
-              <tr><td><b>יוסף לוי</b></td>  <td>12/06/2026</td><td><span class="badge b-crit">Active</span></td>  <td>13/06/2026</td></tr>
-              <tr><td><b>רחל אביגד</b></td> <td>10/06/2026</td><td><span class="badge b-high">Active</span></td>  <td>12/06/2026</td></tr>
-              <tr><td><b>שלמה ברנר</b></td><td>08/06/2026</td><td><span class="badge b-warn">Pending</span></td> <td>11/06/2026</td></tr>
-              <tr><td><b>מרים עזרא</b></td> <td>02/05/2026</td><td><span class="badge b-stable">Resolved</span></td><td>05/05/2026</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="card">
-          <div class="card-hd">
-            <div class="card-title">🎯 ניתוח טראומה – ציוד נדרש</div>
-            <span class="tag-cyan">ballistic_trauma_analysis</span>
-          </div>
-          <table class="tbl">
-            <thead><tr><th>מטופל</th><th>תאריך</th><th>סוג פגיעה</th><th>סטטוס</th></tr></thead>
-            <tbody>
-              <tr><td><b>יוסף לוי</b></td>  <td>12/06/2026</td><td>Heavy Ordnance</td><td><span class="badge b-crit">Critical</span></td></tr>
-              <tr><td><b>שלמה ברנר</b></td><td>08/06/2026</td><td>Light Shrapnel</td><td><span class="badge b-high">Active</span></td></tr>
-              <tr><td><b>נחמן כץ</b></td>   <td>05/06/2026</td><td>Blast Injury</td>  <td><span class="badge b-warn">Stable</span></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
     </div>
-  </div>
-</div>
 
-<script>
-document.getElementById('tb-date').textContent = new Date().toLocaleDateString('he-IL',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
-document.getElementById('a-in').value = new Date().toISOString().slice(0,10);
+    <script>
+      document.getElementById("tb-date").textContent =
+        new Date().toLocaleDateString("he-IL", {
+          weekday: "short",
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+        });
+      document.getElementById("a-in").value = new Date()
+        .toISOString()
+        .slice(0, 10);
 
-// ── Dynamic loaders ──────────────────────────────────────────
-let ALL_DEPTS=[], ALL_PATIENTS=[], ALL_DOCTORS=[];
+      // ── Dynamic loaders ──────────────────────────────────────────
+      let ALL_DEPTS = [],
+        ALL_PATIENTS = [],
+        ALL_DOCTORS = [];
 
-async function loadAll(){
-  const fallbackDepts=[
-    {dept_id:1,dept_name:'Cardiology'},{dept_id:2,dept_name:'Surgery'},
-    {dept_id:3,dept_name:'Neurology'},{dept_id:4,dept_name:'Pediatrics'},
-    {dept_id:5,dept_name:'ICU'},{dept_id:6,dept_name:'Oncology'},
-    {dept_id:7,dept_name:'Orthopedics'},{dept_id:8,dept_name:'Psychiatry'},
-    {dept_id:9,dept_name:'Dermatology'},{dept_id:10,dept_name:'Radiology'}
-  ];
-  try {
-    const depts = await fetch('/api/departments').then(r=>r.json());
-    ALL_DEPTS=depts;
-    fillDepts(depts);
-  } catch(e){
-    ALL_DEPTS=fallbackDepts;
-    fillDepts(fallbackDepts);
-  }
-  loadDoctorsForAdm();
-}
+      async function loadAll() {
+        const fallbackDepts = [
+          { dept_id: 1, dept_name: "Cardiology" },
+          { dept_id: 2, dept_name: "Surgery" },
+          { dept_id: 3, dept_name: "Neurology" },
+          { dept_id: 4, dept_name: "Pediatrics" },
+          { dept_id: 5, dept_name: "ICU" },
+          { dept_id: 6, dept_name: "Oncology" },
+          { dept_id: 7, dept_name: "Orthopedics" },
+          { dept_id: 8, dept_name: "Psychiatry" },
+          { dept_id: 9, dept_name: "Dermatology" },
+          { dept_id: 10, dept_name: "Radiology" },
+        ];
+        try {
+          const depts = await fetch("/api/departments").then((r) => r.json());
+          ALL_DEPTS = depts;
+          fillDepts(depts);
+        } catch (e) {
+          ALL_DEPTS = fallbackDepts;
+          fillDepts(fallbackDepts);
+        }
+        loadDoctorsForAdm();
+      }
 
-function fillDepts(depts){
-  const aDept=document.getElementById('a-dept');
-  aDept.innerHTML='';
-  depts.forEach(d=>{ aDept.innerHTML+=`<option value="${d.dept_id}">${d.dept_name} (${d.dept_id})</option>`; });
+      function fillDepts(depts) {
+        const aDept = document.getElementById("a-dept");
+        aDept.innerHTML = "";
+        depts.forEach((d) => {
+          aDept.innerHTML += `<option value="${d.dept_id}">${d.dept_name} (${d.dept_id})</option>`;
+        });
 
-  const tDept=document.getElementById('t-dept');
-  tDept.innerHTML='<option value="">בחר מחלקה יעד...</option>';
-  depts.forEach(d=>{ tDept.innerHTML+=`<option value="${d.dept_id}">${d.dept_name} (${d.dept_id})</option>`; });
+        const tDept = document.getElementById("t-dept");
+        tDept.innerHTML = '<option value="">בחר מחלקה יעד...</option>';
+        depts.forEach((d) => {
+          tDept.innerHTML += `<option value="${d.dept_id}">${d.dept_name} (${d.dept_id})</option>`;
+        });
 
-  const rbDept=document.getElementById('rb-dept');
-  rbDept.innerHTML='';
-  depts.forEach(d=>{ rbDept.innerHTML+=`<option value="${d.dept_id}">${d.dept_name} (${d.dept_id})</option>`; });
-}
+        const rbDept = document.getElementById("rb-dept");
+        rbDept.innerHTML = "";
+        depts.forEach((d) => {
+          rbDept.innerHTML += `<option value="${d.dept_id}">${d.dept_name} (${d.dept_id})</option>`;
+        });
+      }
 
-async function loadDoctorsForAdm(){
-  const deptId=document.getElementById('a-dept').value;
-  const docSel=document.getElementById('a-doc');
-  docSel.innerHTML='<option value="">טוען רופאים...</option>';
-  try {
-    const docs=await fetch(`/api/doctors?dept_id=${deptId}`).then(r=>r.json());
-    docSel.innerHTML='<option value="">בחר רופא...</option>';
-    docs.forEach(d=>{
-      docSel.innerHTML+=`<option value="${d.doctor_id}" data-dept="${d.dept_id}">${d.doctor_name}</option>`;
-    });
-  } catch(e){
-    docSel.innerHTML='<option value="1" data-dept="1">רופא ברירת מחדל</option>';
-  }
-}
+      async function loadDoctorsForAdm() {
+        const deptId = document.getElementById("a-dept").value;
+        const docSel = document.getElementById("a-doc");
+        docSel.innerHTML = '<option value="">טוען רופאים...</option>';
+        try {
+          const docs = await fetch(`/api/doctors?dept_id=${deptId}`).then((r) =>
+            r.json(),
+          );
+          docSel.innerHTML = '<option value="">בחר רופא...</option>';
+          docs.forEach((d) => {
+            docSel.innerHTML += `<option value="${d.doctor_id}" data-dept="${d.dept_id}">${d.doctor_name}</option>`;
+          });
+        } catch (e) {
+          docSel.innerHTML =
+            '<option value="1" data-dept="1">רופא ברירת מחדל</option>';
+        }
+      }
 
+      loadAll();
 
-loadAll();
+      // ── Admission form ───────────────────────────────────────────
+      function submitAdm() {
+        const inDate = new Date(document.getElementById("a-in").value);
+        const outDate = document.getElementById("a-out").value;
+        const docOpt = document.getElementById("a-doc").selectedOptions[0];
+        const deptVal = document.getElementById("a-dept").value;
+        const r = document.getElementById("adm-r");
+        // Trigger 1: prevent_invalid_discharge_date
+        if (outDate && new Date(outDate) < inDate) {
+          r.className = "rbox err show";
+          r.innerHTML =
+            "⛔ <b>Trigger – prevent_invalid_discharge_date:</b> תאריך השחרור לא יכול להיות מוקדם מתאריך הקבלה.";
+          return;
+        }
+        // Trigger 2: validate_doctor_department (doctor's dept_id must match selected dept)
+        if (docOpt && docOpt.dataset.dept && docOpt.dataset.dept !== deptVal) {
+          r.className = "rbox err show";
+          r.innerHTML = `⛔ <b>Trigger – validate_doctor_department:</b> הרופא "${docOpt.text}" אינו שייך למחלקה שנבחרה.`;
+          return;
+        }
+        const deptName =
+          document.getElementById("a-dept").selectedOptions[0]?.text || "";
+        r.className = "rbox ok show";
+        r.innerHTML = `✓ שחרור האשפוז נרשם בהצלחה · מטופל ID ${document.getElementById("a-pid").value} · ${docOpt?.text || ""} · ${deptName} · ${document.getElementById("a-risk").value}`;
+      }
+      function clearAdm() {
+        document.getElementById("a-out").value = "";
+        document.getElementById("adm-r").className = "rbox";
+      }
 
-// ── Admission form ───────────────────────────────────────────
-function submitAdm(){
-  const inDate=new Date(document.getElementById('a-in').value);
-  const outDate=document.getElementById('a-out').value;
-  const docOpt=document.getElementById('a-doc').selectedOptions[0];
-  const deptVal=document.getElementById('a-dept').value;
-  const r=document.getElementById('adm-r');
-  // Trigger 1: prevent_invalid_discharge_date
-  if(outDate&&new Date(outDate)<inDate){
-    r.className='rbox err show';
-    r.innerHTML='⛔ <b>Trigger – prevent_invalid_discharge_date:</b> תאריך השחרור לא יכול להיות מוקדם מתאריך הקבלה.';
-    return;
-  }
-  // Trigger 2: validate_doctor_department (doctor's dept_id must match selected dept)
-  if(docOpt&&docOpt.dataset.dept&&docOpt.dataset.dept!==deptVal){
-    r.className='rbox err show';
-    r.innerHTML=`⛔ <b>Trigger – validate_doctor_department:</b> הרופא "${docOpt.text}" אינו שייך למחלקה שנבחרה.`;
-    return;
-  }
-  const deptName=document.getElementById('a-dept').selectedOptions[0]?.text||'';
-  r.className='rbox ok show';
-  r.innerHTML=`✓ האשפוז נרשם בהצלחה · מטופל ID ${document.getElementById('a-pid').value} · ${docOpt?.text||''} · ${deptName} · ${document.getElementById('a-risk').value}`;
-}
-function clearAdm(){
-  document.getElementById('a-out').value='';
-  document.getElementById('adm-r').className='rbox';
-}
-
-async function doTransfer(){
-  const pid=document.getElementById('t-pid').value;
-  const deptOpt=document.getElementById('t-dept').selectedOptions[0];
-  const dept=deptOpt?.text||'';
-  const deptId=deptOpt?.value||'';
-  const staff=document.getElementById('t-staff').value.trim()||'לא צוין';
-  const staffId=99; // default staff_id for free-text doctor
-  const notes=document.getElementById('t-notes').value||'ללא הערות';
-  const r=document.getElementById('tr-r');
-  if(!pid){r.className='rbox err show';r.textContent='⛔ יש להזין מזהה מטופל.';return;}
-  if(!deptId){r.className='rbox err show';r.textContent='⛔ יש לבחור מחלקה יעד.';return;}
-  r.className='rbox info show';r.textContent='מריץ פרוצדורת department_handoff_log() על ה-DB...';
-  try {
-    const res=await fetch('/api/logic/transfer-patient',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({patient_id:parseInt(pid),new_dept_id:parseInt(deptId),staff_id:staffId,notes})
-    });
-    const data=await res.json();
-    if(data.success){
-      r.className='rbox ok show';
-      r.textContent=`✓ ${data.message}`;
-      const log=document.getElementById('tlog');
-      const item=document.createElement('div');
-      item.className='tlog-item';item.style.animation='fadeUp .3s ease';
-      item.innerHTML=`<div class="tlog-dot" style="background:var(--cyan)"></div>
+      async function doTransfer() {
+        const pid = document.getElementById("t-pid").value;
+        const deptOpt = document.getElementById("t-dept").selectedOptions[0];
+        const dept = deptOpt?.text || "";
+        const deptId = deptOpt?.value || "";
+        const staff =
+          document.getElementById("t-staff").value.trim() || "לא צוין";
+        const staffId = 99; // default staff_id for free-text doctor
+        const notes = document.getElementById("t-notes").value || "ללא הערות";
+        const r = document.getElementById("tr-r");
+        if (!pid) {
+          r.className = "rbox err show";
+          r.textContent = "⛔ יש להזין מזהה מטופל.";
+          return;
+        }
+        if (!deptId) {
+          r.className = "rbox err show";
+          r.textContent = "⛔ יש לבחור מחלקה יעד.";
+          return;
+        }
+        r.className = "rbox info show";
+        r.textContent = "מריץ פרוצדורת department_handoff_log() על ה-DB...";
+        try {
+          const res = await fetch("/api/logic/transfer-patient", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              patient_id: parseInt(pid),
+              new_dept_id: parseInt(deptId),
+              staff_id: staffId,
+              notes,
+            }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            r.className = "rbox ok show";
+            r.textContent = `✓ ${data.message}`;
+            const log = document.getElementById("tlog");
+            const item = document.createElement("div");
+            item.className = "tlog-item";
+            item.style.animation = "fadeUp .3s ease";
+            item.innerHTML = `<div class="tlog-dot" style="background:var(--cyan)"></div>
         <div><div class="tlog-txt"><b>מטופל ID ${pid}</b> → ${dept}</div>
         <div class="tlog-sub">עכשיו · ${staff} · "${notes}"</div></div>`;
-      log.prepend(item);
-    } else {
-      r.className='rbox err show';r.textContent=`⛔ שגיאה: ${data.error}`;
-    }
-  } catch(e){
-    r.className='rbox ok show';
-    r.textContent=`✓ ההעברה בוצעה (simulation): מטופל ID ${pid} → ${dept} · "${notes}"`;
-    const log=document.getElementById('tlog');
-    const item=document.createElement('div');item.className='tlog-item';
-    item.innerHTML=`<div class="tlog-dot" style="background:var(--cyan)"></div>
+            log.prepend(item);
+          } else {
+            r.className = "rbox err show";
+            r.textContent = `⛔ שגיאה: ${data.error}`;
+          }
+        } catch (e) {
+          r.className = "rbox ok show";
+          r.textContent = `✓ ההעברה בוצעה (simulation): מטופל ID ${pid} → ${dept} · "${notes}"`;
+          const log = document.getElementById("tlog");
+          const item = document.createElement("div");
+          item.className = "tlog-item";
+          item.innerHTML = `<div class="tlog-dot" style="background:var(--cyan)"></div>
       <div><div class="tlog-txt"><b>מטופל ID ${pid}</b> → ${dept}</div>
       <div class="tlog-sub">עכשיו · ${staff} · "${notes}"</div></div>`;
-    log.prepend(item);
-  }
-}
-
-const DB={
-  '1':[{n:'ד"ר שחר',b:34,a:17},{n:'ד"ר מרים',b:12,a:17}],
-  '2':[{n:'ד"ר נועם',b:28,a:14},{n:'ד"ר יוסי',b:8,a:11},{n:'ד"ר ליאור',b:5,a:8}],
-  '3':[{n:'ד"ר אלון',b:22,a:11},{n:'ד"ר גלית',b:6,a:11}],
-  '5':[{n:'ד"ר רינה',b:19,a:10},{n:'ד"ר עמי',b:8,a:10},{n:'ד"ר תמר',b:5,a:9}]
-};
-async function doRebal(){
-  const dept=document.getElementById('rb-dept').value;
-  const docs=DB[dept];
-  const r=document.getElementById('rb-r');
-  r.className='rbox info show';r.textContent='מריץ rebalance_and_audit_department() על ה-DB...';
-
-  // Show "before" from local data immediately
-  document.getElementById('rebal-cmp').style.display='block';
-  document.getElementById('bef-body').innerHTML=docs.map(d=>`<tr><td><b>${d.n}</b></td><td style="color:${d.b>20?'var(--red)':'var(--t2)'};font-weight:700">${d.b}</td></tr>`).join('');
-  document.getElementById('aft-body').innerHTML=`<tr><td colspan="2" style="text-align:center;color:var(--t4)">מחשב...</td></tr>`;
-
-  try {
-    const res=await fetch('/api/logic/rebalance-department',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({dept_id:parseInt(dept)})
-    });
-    const data=await res.json();
-    if(data.success){
-      if(data.doctors&&data.doctors.length>0){
-        document.getElementById('aft-body').innerHTML=data.doctors.map(d=>
-          `<tr><td><b>${d.doctor_name}</b></td><td style="color:var(--green);font-weight:700">${d.patient_count}</td></tr>`).join('');
-      } else {
-        // fallback to simulation after values
-        document.getElementById('aft-body').innerHTML=docs.map(d=>`<tr><td><b>${d.n}</b></td><td style="color:var(--green);font-weight:700">${d.a}</td></tr>`).join('');
+          log.prepend(item);
+        }
       }
-      r.className='rbox ok show';r.textContent=`✓ ${data.message}`;
-    } else {
-      document.getElementById('aft-body').innerHTML=docs.map(d=>`<tr><td><b>${d.n}</b></td><td style="color:var(--green);font-weight:700">${d.a}</td></tr>`).join('');
-      r.className='rbox err show';r.textContent=`⛔ שגיאה: ${data.error}`;
-    }
-  } catch(e){
-    // fallback simulation
-    document.getElementById('aft-body').innerHTML=docs.map(d=>`<tr><td><b>${d.n}</b></td><td style="color:var(--green);font-weight:700">${d.a}</td></tr>`).join('');
-    const total=docs.reduce((s,d)=>s+d.a,0);
-    r.className='rbox ok show';
-    r.textContent=`✓ האיזון הושלם (simulation) – ${docs.length} רופאים, ${total} מטופלים חולקו שווה.`;
-  }
-}
-</script>
-</body>
+
+      const DB = {
+        1: [
+          { n: 'ד"ר שחר', b: 34, a: 17 },
+          { n: 'ד"ר מרים', b: 12, a: 17 },
+        ],
+        2: [
+          { n: 'ד"ר נועם', b: 28, a: 14 },
+          { n: 'ד"ר יוסי', b: 8, a: 11 },
+          { n: 'ד"ר ליאור', b: 5, a: 8 },
+        ],
+        3: [
+          { n: 'ד"ר אלון', b: 22, a: 11 },
+          { n: 'ד"ר גלית', b: 6, a: 11 },
+        ],
+        5: [
+          { n: 'ד"ר רינה', b: 19, a: 10 },
+          { n: 'ד"ר עמי', b: 8, a: 10 },
+          { n: 'ד"ר תמר', b: 5, a: 9 },
+        ],
+      };
+      async function doRebal() {
+        const dept = document.getElementById("rb-dept").value;
+        const docs = DB[dept];
+        const r = document.getElementById("rb-r");
+        r.className = "rbox info show";
+        r.textContent = "מריץ rebalance_and_audit_department() על ה-DB...";
+
+        // Show "before" from local data immediately
+        document.getElementById("rebal-cmp").style.display = "block";
+        document.getElementById("bef-body").innerHTML = docs
+          .map(
+            (d) =>
+              `<tr><td><b>${d.n}</b></td><td style="color:${d.b > 20 ? "var(--red)" : "var(--t2)"};font-weight:700">${d.b}</td></tr>`,
+          )
+          .join("");
+        document.getElementById("aft-body").innerHTML =
+          `<tr><td colspan="2" style="text-align:center;color:var(--t4)">מחשב...</td></tr>`;
+
+        try {
+          const res = await fetch("/api/logic/rebalance-department", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ dept_id: parseInt(dept) }),
+          });
+          const data = await res.json();
+          if (data.success) {
+            if (data.doctors && data.doctors.length > 0) {
+              document.getElementById("aft-body").innerHTML = data.doctors
+                .map(
+                  (d) =>
+                    `<tr><td><b>${d.doctor_name}</b></td><td style="color:var(--green);font-weight:700">${d.patient_count}</td></tr>`,
+                )
+                .join("");
+            } else {
+              // fallback to simulation after values
+              document.getElementById("aft-body").innerHTML = docs
+                .map(
+                  (d) =>
+                    `<tr><td><b>${d.n}</b></td><td style="color:var(--green);font-weight:700">${d.a}</td></tr>`,
+                )
+                .join("");
+            }
+            r.className = "rbox ok show";
+            r.textContent = `✓ ${data.message}`;
+          } else {
+            document.getElementById("aft-body").innerHTML = docs
+              .map(
+                (d) =>
+                  `<tr><td><b>${d.n}</b></td><td style="color:var(--green);font-weight:700">${d.a}</td></tr>`,
+              )
+              .join("");
+            r.className = "rbox err show";
+            r.textContent = `⛔ שגיאה: ${data.error}`;
+          }
+        } catch (e) {
+          // fallback simulation
+          document.getElementById("aft-body").innerHTML = docs
+            .map(
+              (d) =>
+                `<tr><td><b>${d.n}</b></td><td style="color:var(--green);font-weight:700">${d.a}</td></tr>`,
+            )
+            .join("");
+          const total = docs.reduce((s, d) => s + d.a, 0);
+          r.className = "rbox ok show";
+          r.textContent = `✓ האיזון הושלם (simulation) – ${docs.length} רופאים, ${total} מטופלים חולקו שווה.`;
+        }
+      }
+    </script>
+  </body>
 </html>
